@@ -1,0 +1,48 @@
+Копирование файлов по протоколу SSH
+
+Перед копированием надо проверять доступность доступа по SSH. Как вариант, проверять содержимое файла acl.ini.
+При запрете доступа по SSH, менять содержимое, перезапускать демона, затем копировать нужное, возвращать 
+исходное содержимое acl.ini и опять перезапускать демона.
+
+Копирование директории с блока на компьютер
+pscp -pw good -r root@192.168.0.163:/temas/codec/ d:\codec
+Копирование файла с блока на компьютер
+pscp -pw good root@192.168.0.163:/temas/codec/acl.ini d:\codec
+Копирование файла с компьютера на блок
+pscp -pw good d:\codec\acl1.ini root@192.168.0.163:/temas/codec/
+ПРИ КОПИРОВАНИИ ИСПОЛНЯЕМЫХ ФАЙЛОВ ТЕРЯЕТСЯ АТТРИБУТ +X. Нужно устнавливать его вручную через консоль EditCodecOptions
+
+ Использование: PSCP [Опция] [Имя пользователя @] Хост: Источник цели
+             PSCP [Параметры] Источник [Другое источника ...] [Имя пользователя @] Хост: цель
+             PSCP [Опции] -Ls [Имя пользователя @] Хост: указанный файл
+Options:
+  -V        print version information and exit
+  -pgpfp    print PGP key fingerprints and exit
+  -p        preserve file attributes
+  -q        quiet, don't show statistics
+  -r        copy directories recursively
+  -v        show verbose messages
+  -load sessname  Load settings from saved session
+  -P port   connect to specified port
+  -l user   connect with specified username
+  -pw passw login with specified password
+  -1 -2     force use of particular SSH protocol version
+  -4 -6     force use of IPv4 or IPv6
+  -C        enable compression
+  -i key    private key file for user authentication
+  -noagent  disable use of Pageant
+  -agent    enable use of Pageant
+  -hostkey aa:bb:cc:...
+            manually specify a host key (may be repeated)
+  -batch    disable all interactive prompts
+  -no-sanitise-stderr  don't strip control chars from standard error
+  -proxycmd command
+            use 'command' as local proxy
+  -unsafe   allow server-side wildcards (DANGEROUS)
+  -sftp     force use of SFTP protocol
+  -scp      force use of SCP protocol
+  -sshlog file
+  -sshrawlog file
+            log protocol details to a file
+  -auto-store-sshkey
+            store automatically the servers ssh keys
