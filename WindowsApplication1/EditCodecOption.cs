@@ -15,6 +15,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using log4net;
+using log4net.Repository.Hierarchy;
+
 //using File = System.IO.File;
 
 namespace TCPclient
@@ -23,7 +26,8 @@ namespace TCPclient
     {
 
         EditCodecOptionController controller;
-
+        private static ILog logger =
+            LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         public EditCodecForm()
         {
             InitializeComponent();
@@ -326,7 +330,6 @@ namespace TCPclient
                 }
                 //
                 netstream = tcp_client.GetStream();
- //               controller.StartThread();
 
                 if (!rtcp_Started)
                 {
@@ -810,6 +813,7 @@ namespace TCPclient
             lbRegistrStat.Text = "Ждем подключения";
             lbRegistrStat.Refresh();
             //открыть новое
+            //CreateTCPstream();
             controller.CreateTCPstream(tbIPcdc.Text,IPport);//регистрация + запрос_настроек
             IPcdc_str = tbIPcdc.Text;
         }
@@ -842,8 +846,10 @@ namespace TCPclient
                     controller.netstream.Write(data, 0, data.Length);
                 }
             }
-            catch //(SocketException e)
-            { }
+            catch (Exception e)
+            {
+                logger.Error($"SENDMSG {e.StackTrace} {e.Message}");
+            }
         }
         //запрос настроек с кодека
         private void btCdcOptionRqst_Click(object sender, EventArgs e)
@@ -1721,36 +1727,42 @@ namespace TCPclient
         }
         public void AddMsgToCon(string s, bool newline)
         {
-//            if (con_pause || !paConsole.Visible)
-//                return;
+            if (con_pause || !paConsole.Visible)
+                return;
+            
             if (this.WindowState == FormWindowState.Minimized) //наша форма свернута
                 return; //не выводить, иначе через некоторое время заклинивает
-            if (ConsoleText.Lines.Length >= 250)
+            Invoke((MethodInvoker)(() =>
             {
-                if (this.WindowState != FormWindowState.Minimized) //наша форма не свернута
+                if (ConsoleText.Lines.Length >= 250)
                 {
-                    ConsoleText.Select(0, ConsoleText.TextLength / 5);
-                    ConsoleText.Cut(); //!! move в Clipboard
-                    //try  //бывают проблемы при интенсивном выводе
-                    //{    //?? а если запущены 2 терминала
-                    //    Clipboard.Clear(); //если свернута- можем навредить другим задачам
-                    //}
-                    //catch { }
-                }
-                else
-                    for (int i = 0; i < 50; i++)
+                    if (this.WindowState != FormWindowState.Minimized) //наша форма не свернута
                     {
-                        if (ConsoleText.Lines[0].Length > 0)
-                            ConsoleText.Lines[0].Remove(0);
+                        ConsoleText.Select(0, ConsoleText.TextLength / 5);
+                        ConsoleText.Cut(); //!! move в Clipboard
+                        //try  //бывают проблемы при интенсивном выводе
+                        //{    //?? а если запущены 2 терминала
+                        //    Clipboard.Clear(); //если свернута- можем навредить другим задачам
+                        //}
+                        //catch { }
                     }
-            }
-            if (newline) // || (ConsoleText.Lines.Length > 0
-                         //   && ConsoleText.Lines[ConsoleText.Lines.Length - 1].Length >= 80))
-                s = "\r\n" + s;
-            else
-                s = s.Replace("\n", "\r\n"); //формат кодека 
-            ConsoleText.AppendText(s);
-            WriteLogFile(s);
+                    else
+                        for (int i = 0; i < 50; i++)
+                        {
+                            if (ConsoleText.Lines[0].Length > 0)
+                                ConsoleText.Lines[0].Remove(0);
+                        }
+                }
+                if (newline) // || (ConsoleText.Lines.Length > 0
+                    //   && ConsoleText.Lines[ConsoleText.Lines.Length - 1].Length >= 80))
+                    s = "\r\n" + s;
+                else
+                    s = s.Replace("\n", "\r\n"); //формат кодека 
+                ConsoleText.AppendText(s);
+                WriteLogFile(s);
+
+            }));
+            
         }
         private void PortMode_Set()
         {
@@ -2398,8 +2410,19 @@ namespace TCPclient
 
         public void onChanged(List<string> files)
         {
-            RemoteRefresh(files);
-            listViewRemote.Refresh();
+            if (InvokeRequired)
+            {
+                Invoke((MethodInvoker)(() =>
+                {
+                    RemoteRefresh(files);
+                    listViewRemote.Refresh();
+                }));
+            }
+            else
+            {
+                RemoteRefresh(files);
+                listViewRemote.Refresh();
+            }
         }
 
         public void onConnected(bool connected)

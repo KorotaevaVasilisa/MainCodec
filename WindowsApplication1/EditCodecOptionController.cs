@@ -105,9 +105,9 @@ namespace TCPclient
 
         public void Parse()
         {
+            string str = "";
             while (true)
             {
-                string str = "";
                 str = GetLine();
                 // string s1 = str;
                 if (!str.Contains("tst_connect") && !MyParentForm.findcdcs)
@@ -119,7 +119,7 @@ namespace TCPclient
                     {
                         if (!MyParentForm.findcdcs)
                         {
-                            MyParentForm.findcdcs = true;
+                            //MyParentForm.findcdcs = true;
                             MyParentForm.connect = true;
                             MyParentForm.SetLabelStatus("connected");
                         }
@@ -211,23 +211,31 @@ namespace TCPclient
                     }
                 }
 
-                if (str.StartsWith("Ok Ls"))
+                try
                 {
-                    MyParentForm.rmsg_ls = str;
-                    while (true)
+                    if (str.StartsWith("Ok Ls"))
                     {
-                        str = GetLine();
-                        MyParentForm.rmsg_ls += str;
-                        MyParentForm.AddMsgToCon(str, true);
-                        if (str.StartsWith(":."))
+                        MyParentForm.rmsg_ls = str;
+                        while (true)
                         {
-                            string[] text = MyParentForm.rmsg_ls.Split('\r', '\n');
-                            List<string> list = new List<string>(text);
-                            remoteChanged.onChanged(list);
-                            break;
+                            str = GetLine();
+                            MyParentForm.rmsg_ls += str;
+                            MyParentForm.AddMsgToCon(str, true);
+                            if (str.StartsWith(":."))
+                            {
+                                string[] text = MyParentForm.rmsg_ls.Split('\r', '\n');
+                                List<string> list = new List<string>(text);
+                                remoteChanged.onChanged(list);
+                                break;
+                            }
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    logger.Error(String.Format($"{e.StackTrace} {e.Message}", this, DateTime.Now));
+                }
+
 
                 if (str.StartsWith("Ok get: o"))
                 {
@@ -279,7 +287,7 @@ namespace TCPclient
                     }
                     catch (Exception e)
                     {
-                        logger.Error(String.Format("ERROR THREAD" + e.Message.ToString(), this, DateTime.Now));
+                        logger.Error(String.Format("ERROR THREAD " + e.Message.ToString(), this, DateTime.Now));
                     }
                 }
             }
