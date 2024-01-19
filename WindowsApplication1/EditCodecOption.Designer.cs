@@ -99,6 +99,13 @@
             this.ColumnSize = new System.Windows.Forms.ColumnHeader();
             this.ColumnDate = new System.Windows.Forms.ColumnHeader();
             this.ColumnAtr = new System.Windows.Forms.ColumnHeader();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.transferStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.textLocalPath = new System.Windows.Forms.TextBox();
             this.comboBoxDriveInfo = new System.Windows.Forms.ComboBox();
             this.panIP.SuspendLayout();
@@ -111,6 +118,7 @@
             this.paConsole.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.paNavigation.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btConnect
@@ -762,6 +770,7 @@
             // listViewLocal
             // 
             this.listViewLocal.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.ColumnName, this.ColumnSize, this.ColumnDate, this.ColumnAtr });
+            this.listViewLocal.ContextMenuStrip = this.contextMenuStrip1;
             this.listViewLocal.FullRowSelect = true;
             this.listViewLocal.HideSelection = false;
             this.listViewLocal.Location = new System.Drawing.Point(11, 85);
@@ -771,6 +780,7 @@
             this.listViewLocal.UseCompatibleStateImageBehavior = false;
             this.listViewLocal.View = System.Windows.Forms.View.Details;
             this.listViewLocal.DoubleClick += new System.EventHandler(this.listView_DoubleClick);
+            this.listViewLocal.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listViewLocal_MouseUp);
             // 
             // ColumnName
             // 
@@ -790,6 +800,60 @@
             // ColumnAtr
             // 
             this.ColumnAtr.Text = "Атрибут";
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.showStripMenuItem, this.editStripMenuItem, this.copyToolStripMenuItem, this.transferStripMenuItem, this.createStripMenuItem, this.deleteStripMenuItem });
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(205, 148);
+            // 
+            // showStripMenuItem
+            // 
+            this.showStripMenuItem.Name = "showStripMenuItem";
+            this.showStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.showStripMenuItem.Size = new System.Drawing.Size(204, 24);
+            this.showStripMenuItem.Text = "Смотреть";
+            this.showStripMenuItem.Click += new System.EventHandler(this.showStripMenuItem_Click);
+            // 
+            // editStripMenuItem
+            // 
+            this.editStripMenuItem.Name = "editStripMenuItem";
+            this.editStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
+            this.editStripMenuItem.Size = new System.Drawing.Size(204, 24);
+            this.editStripMenuItem.Text = "Редактировать";
+            this.editStripMenuItem.Click += new System.EventHandler(this.editStripMenuItem_Click);
+            // 
+            // copyToolStripMenuItem
+            // 
+            this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            this.copyToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(204, 24);
+            this.copyToolStripMenuItem.Text = "Копировать";
+            this.copyToolStripMenuItem.Click += new System.EventHandler(this.copyToolStripMenuItem_Click);
+            // 
+            // transferStripMenuItem
+            // 
+            this.transferStripMenuItem.Name = "transferStripMenuItem";
+            this.transferStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.transferStripMenuItem.Size = new System.Drawing.Size(204, 24);
+            this.transferStripMenuItem.Text = "Перенести";
+            this.transferStripMenuItem.Click += new System.EventHandler(this.transferStripMenuItem_Click);
+            // 
+            // createStripMenuItem
+            // 
+            this.createStripMenuItem.Name = "createStripMenuItem";
+            this.createStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
+            this.createStripMenuItem.Size = new System.Drawing.Size(204, 24);
+            this.createStripMenuItem.Text = "Создать папку";
+            this.createStripMenuItem.Click += new System.EventHandler(this.createStripMenuItem_Click);
+            // 
+            // deleteStripMenuItem
+            // 
+            this.deleteStripMenuItem.Name = "deleteStripMenuItem";
+            this.deleteStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
+            this.deleteStripMenuItem.Size = new System.Drawing.Size(204, 24);
+            this.deleteStripMenuItem.Text = "Удалить";
+            this.deleteStripMenuItem.Click += new System.EventHandler(this.deleteStripMenuItem_Click);
             // 
             // textLocalPath
             // 
@@ -852,9 +916,22 @@
             this.tabPage2.ResumeLayout(false);
             this.paNavigation.ResumeLayout(false);
             this.paNavigation.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.ToolStripMenuItem transferStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem createStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteStripMenuItem;
+
+        private System.Windows.Forms.ToolStripMenuItem editStripMenuItem;
+
+        private System.Windows.Forms.ToolStripMenuItem showStripMenuItem;
+
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
 
         #endregion
 

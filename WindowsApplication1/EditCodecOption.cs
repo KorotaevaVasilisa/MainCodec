@@ -24,10 +24,11 @@ namespace TCPclient
 {
     public partial class EditCodecForm : Form, OnFileRemoteChanged
     {
-
         EditCodecOptionController controller;
+
         private static ILog logger =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public EditCodecForm()
         {
             InitializeComponent();
@@ -41,6 +42,7 @@ namespace TCPclient
 
             controller = new EditCodecOptionController(this, this);
         }
+
         void ReadNetConfig()
         {
             try
@@ -56,6 +58,7 @@ namespace TCPclient
                 {
                     MsgToCon("Ошибка в файле конфигурации (парам.IPcodec). " + e.Message);
                 }
+
                 IPport = ((int)(configAppSettings.GetValue("IPport", typeof(int))));
                 /*try
                 {
@@ -69,6 +72,7 @@ namespace TCPclient
             {
                 MsgToCon("Ошибка в файле конфигурации. " + e.Message);
             }
+
             return;
         }
 #if COM_PORT
@@ -82,18 +86,22 @@ namespace TCPclient
                 try
                 {
                     log_enbl = !((bool)(configAppSettings.GetValue("WriteLogFile", typeof(bool))));
-                    btLogEnbl_Click(null, null);//инвертирует log_enbl
+                    btLogEnbl_Click(null, null); //инвертирует log_enbl
                 }
                 catch (System.SystemException e)
                 {
                     PutNewLineToCon(e.Message);
                 }
+
                 try
                 {
                     i = ((int)(configAppSettings.GetValue("ComNumber", typeof(int))));
                 }
                 catch (System.SystemException e)
-                { PutNewLineToCon(e.Message); }
+                {
+                    PutNewLineToCon(e.Message);
+                }
+
                 try
                 {
                     if ((bool)(configAppSettings.GetValue("DosEncoding", typeof(bool))))
@@ -103,19 +111,28 @@ namespace TCPclient
                     }
                 }
                 catch (System.SystemException e)
-                { PutNewLineToCon(e.Message); }
+                {
+                    PutNewLineToCon(e.Message);
+                }
+
                 try
                 {
                     my_serial.BaudRate = ((int)(configAppSettings.GetValue("ComBaudRate", typeof(int))));
                 }
                 catch (System.SystemException e)
-                { PutNewLineToCon(e.Message); }
+                {
+                    PutNewLineToCon(e.Message);
+                }
+
                 try
                 {
                     my_serial.DataBits = ((int)(configAppSettings.GetValue("ComDataBits", typeof(int))));
                 }
                 catch (System.SystemException e)
-                { PutNewLineToCon(e.Message); }
+                {
+                    PutNewLineToCon(e.Message);
+                }
+
                 string par;
                 try
                 {
@@ -128,7 +145,10 @@ namespace TCPclient
                         my_serial.Parity = System.IO.Ports.Parity.Odd;
                 }
                 catch (System.SystemException e)
-                { PutNewLineToCon(e.Message); }
+                {
+                    PutNewLineToCon(e.Message);
+                }
+
                 try
                 {
                     par = ((string)(configAppSettings.GetValue("ComStopBits", typeof(string)))).ToUpper();
@@ -142,38 +162,50 @@ namespace TCPclient
                         my_serial.StopBits = System.IO.Ports.StopBits.Two;
                 }
                 catch (System.SystemException e)
-                { PutNewLineToCon(e.Message); }
+                {
+                    PutNewLineToCon(e.Message);
+                }
+
                 try
                 {
                     if ((bool)(configAppSettings.GetValue("ComUseCTS", typeof(bool))))
                         UseCTS = true; //сами вручную следим за CTS
                 }
                 catch (System.SystemException e)
-                { PutNewLineToCon(e.Message); }
+                {
+                    PutNewLineToCon(e.Message);
+                }
+
                 try
                 {
                     if ((bool)(configAppSettings.GetValue("ComRTShandshake", typeof(bool))))
                     {
                         my_serial.RtsEnable = false;
-                        my_serial.Handshake = System.IO.Ports.Handshake.RequestToSend;//снимает RTS, если 
-                        RTShandshake = true;   //во вход.буфере < 1024 своб.байт ??и передает только при CTS==1 
+                        my_serial.Handshake = System.IO.Ports.Handshake.RequestToSend; //снимает RTS, если 
+                        RTShandshake = true; //во вход.буфере < 1024 своб.байт ??и передает только при CTS==1 
                         UseCTS = false;
                     }
                 }
                 catch (System.SystemException e)
-                { PutNewLineToCon(e.Message); }
+                {
+                    PutNewLineToCon(e.Message);
+                }
+
                 try
                 {
                     if ((bool)(configAppSettings.GetValue("ShowDebugMsg", typeof(bool))))
                         enabl_dbg_msg = true;
                 }
                 catch (System.SystemException e)
-                { PutNewLineToCon(e.Message); }
+                {
+                    PutNewLineToCon(e.Message);
+                }
             }
             catch
             {
                 PutNewLineToCon("Неопознанная ошибка в файле конфигурации");
             }
+
             UpDnNport.Value = i; //по старту имя "COM", чтобы не открывать здесь
             my_serial.PortName = "COM" + i;
             //!! может 2 раза вызывать btOpen_Click: из Nport_Chngd
@@ -193,15 +225,18 @@ namespace TCPclient
                             break;
                         }
                     }
+
                     if (si == lbBaud.Items.Count)
                         lbBaud.Items.Add(my_serial.BaudRate);
                     break;
                 }
                 else
                     si = i;
+
                 if (lbBaud.Items[si].ToString() == my_serial.BaudRate.ToString())
                     break;
             }
+
             lbBaud.SelectedIndex = si;
         }
 #endif
@@ -226,9 +261,11 @@ namespace TCPclient
                     }
                 }
             }
+
             return ok;
         }
-        void InitNetParam(/*bool okcfg*/)
+
+        void InitNetParam( /*bool okcfg*/)
         {
             //Dns.GetHostByName(Dns.GetHostName()).AddressList[0]; 
             string HostName = "";
@@ -252,6 +289,7 @@ namespace TCPclient
                     //break;
                 }
             }
+
             MsgToCon("");
             tbIPcomp.Text = IPhost;
             tbPort.Text = IPport.ToString();
@@ -265,12 +303,16 @@ namespace TCPclient
             //    MessageBox.Show("Некорректное значение IP кодека", "Ошибка");
             timerTstConnect.Start();
         }
+
         //
         public bool intrf_com = false;
+
         bool //need_dos_encode = false,
-             enabl_dbg_msg = false;
+            enabl_dbg_msg = false;
+
         bool RTShandshake = false,
-            log_enbl = false, first_rec = true;
+            log_enbl = false,
+            first_rec = true;
 #if COM_PORT
         bool UseCTS = false;
 #endif
@@ -283,9 +325,15 @@ namespace TCPclient
         System.Text.Encoding myEncoding = Encoding.GetEncoding("windows-1251");
         const int IPport_dflt = 1201;
         int IPport = IPport_dflt;
-        public string rmsg_net = "", rmsg_unicast = "",
-            rmsg_fm = "", rmsg_fms = "", rmsg_icecast = "",
-            rmsg_program = "", rmsg_ls = "";
+
+        public string rmsg_net = "",
+            rmsg_unicast = "",
+            rmsg_fm = "",
+            rmsg_fms = "",
+            rmsg_icecast = "",
+            rmsg_program = "",
+            rmsg_ls = "";
+
         public string[] rmsg_stat = new string[4] { "", "", "", "" };
         public string t_cpu = "";
         string StationsFile = Application.StartupPath + "\\" + "stations.txt";
@@ -302,13 +350,15 @@ namespace TCPclient
                 //попингуем
                 PingReply reply = pingsender.Send(tbIPcdc.Text, 2, buffer, options);
                 if (reply != null && reply.Status == IPStatus.Success)
-                { //Есть в сети
+                {
+                    //Есть в сети
                 }
                 else
                 {
                     lbRegistrStat.Text = "Нет в сети";
                     return;
                 }
+
                 //создание TCP_клиента и нитки на чтение
                 //  закрыть тек.подключение
                 if (netstream != null)
@@ -328,6 +378,7 @@ namespace TCPclient
                 {
                     throw new SocketException(10060); //Connection timed out
                 }
+
                 //
                 netstream = tcp_client.GetStream();
 
@@ -340,10 +391,9 @@ namespace TCPclient
                 }
 
 
-                SendMsg("login temas\r");//регистрация
+                SendMsg("login temas\r"); //регистрация
                 Thread.Sleep(1000);
                 CdcOptionRqst(); //запрос настроек
-
             }
             catch (Exception e)
             {
@@ -355,30 +405,29 @@ namespace TCPclient
                 lbRegistrStat.Text = "Ошибка подключения";
                 lbRegistrStat.Refresh();
                 if (e is System.Net.Sockets.SocketException)
-                    MessageBox.Show("Не поднимается соединение по TCP. Ошибка_" + (e as System.Net.Sockets.SocketException).ErrorCode + "\n"
-                        + e.Message + "\nПопробуйте повторить через 20сек", "Ошибка");
+                    MessageBox.Show("Не поднимается соединение по TCP. Ошибка_" +
+                                    (e as System.Net.Sockets.SocketException).ErrorCode + "\n"
+                                    + e.Message + "\nПопробуйте повторить через 20сек", "Ошибка");
                 else
                     MessageBox.Show("Не поднимается соединение по TCP\n" + e.Message, "Ошибка");
             }
         }
+
         private void ThreadProc()
         {
-            while (rtcp_Started/*!rtcp_Finished*/)
+            while (rtcp_Started /*!rtcp_Finished*/)
             {
-                Thread.Sleep(1);//2
+                Thread.Sleep(1); //2
                 if (netstream != null && netstream.CanRead) //Check if NetworkStream is readable
                 {
                     try
                     {
                         if (netstream.DataAvailable)
                         {
-
-
                             //controller.Parse();
                             Parse();
 
                             //Parse(nbytesread, myEncoding.GetChars(myReadBuffer));
-
 
 
                             //ParseTCPpack(nbytesread, ref myReadBuffer);
@@ -419,6 +468,7 @@ namespace TCPclient
                 }
             }
         }
+
         private void ClosedForm(object sender, FormClosedEventArgs e)
         {
             //timerTstConnect.Stop();
@@ -438,8 +488,9 @@ namespace TCPclient
                     //    tcp_client.Close(); //??надо ли
                 }
             }
+
             System.Diagnostics.Process proc = System.Diagnostics.Process.GetCurrentProcess();
-            proc.Kill();//на вс.сл. ??Kill или Close
+            proc.Kill(); //на вс.сл. ??Kill или Close
             proc.WaitForExit(1500); // ожидать 1?2 сек до завершения процесса
             //GC.SuppressFinalize(this);
         }
@@ -518,8 +569,10 @@ namespace TCPclient
                     }
                 } */
         public bool findcdcs = false, //режим сканирования подсети отключен
-            cdc_newver = false;//кодек не поддерж.настройку параметров
+            cdc_newver = false; //кодек не поддерж.настройку параметров
+
         List<string> Codecs_ip = new List<string>();
+
         private void FindCodecs()
         {
             string subnet_ip = tbIPcdc.Text;
@@ -530,6 +583,7 @@ namespace TCPclient
                 lbRegistrStat.Text = "Ждем подключения";
                 return;
             }
+
             DialogResult res = MessageBox.Show("Адрес подсети выбран из бокса IP на панели <Подключение>\nПродолжить?",
                 "Сканирование подсети " + subnet_ip, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (res != DialogResult.Yes)
@@ -538,11 +592,13 @@ namespace TCPclient
                 lbRegistrStat.Text = "Ждем подключения";
                 return;
             }
+
             if (!paConsole.Visible)
             {
                 this.Height = 612;
                 paConsole.Visible = true;
             }
+
             pbFindCodecs.Visible = true;
             btListCdcs.Text = "Стоп";
             btListCdcs.Visible = true;
@@ -577,6 +633,7 @@ namespace TCPclient
                     MsgToCon(msg + "Нет в сети");
                     continue;
                 }
+
                 try
                 {
 #if NOTH
@@ -667,6 +724,7 @@ namespace TCPclient
                         //tcp_clnt.Close();
                         throw new SocketException(10060); //Connection timed out
                     }
+
                     //
                     ncdcs++;
                     Codecs_ip.Add(curr_ip);
@@ -681,6 +739,7 @@ namespace TCPclient
                         rtcp_Started = true;
                         rtcp_Thread.Start();
                     }
+
                     //дать команды регистр-ии и чтения netstat
                     rmsg_net = "";
                     cdc_newver = true;
@@ -696,6 +755,7 @@ namespace TCPclient
                         if (rmsg_net != "" || !cdc_newver)
                             break;
                     }
+
                     string nm = "не поддерж.";
                     if (cdc_newver) //прошивка кодека поддерживает настройку параметров
                     {
@@ -705,6 +765,7 @@ namespace TCPclient
                             nm = "cs";
                         nm = nm + NetEdit.args[0];
                     }
+
                     Codecs_ip[Codecs_ip.Count - 1] += "  " + nm;
                 }
                 catch (Exception e)
@@ -730,6 +791,7 @@ namespace TCPclient
                         tcp_clnt.Close();
                 }
             }
+
             MsgToCon("Поиск кодеков закончен. Кодеков на связи: " + ncdcs);
             lbRegistrStat.BackColor = SystemColors.Control;
             lbRegistrStat.Text = "Не подключен";
@@ -746,6 +808,7 @@ namespace TCPclient
             else
                 btListCdcs.Visible = false;
         }
+
         private void btFindCodecs_Click(object sender, EventArgs e)
         {
             connect = false;
@@ -761,14 +824,17 @@ namespace TCPclient
                 MessageBox.Show("Некорректный номер порта", "Ошибка");
                 return;
             }
+
             //timerFindCdc.Start();
             FindCodecs();
         }
+
         private void timerFindCdc_Tick(object sender, EventArgs e)
         {
             timerFindCdc.Stop();
             //FindCodecs();
         }
+
         private void btListCdcs_Click(object sender, EventArgs e)
         {
             if (findcdcs)
@@ -776,13 +842,16 @@ namespace TCPclient
                 findcdcs = false;
                 return;
             }
+
             if (tbCodecs.Visible)
                 tbCodecs.Visible = false;
             else
                 tbCodecs.Visible = true;
         }
+
         //end <Поиск кодеков>
         static string IPcdc_str = "";
+
         private void btConnect_Click(object sender, EventArgs e)
         {
             connect = false;
@@ -795,12 +864,16 @@ namespace TCPclient
             rmsg_fms = "";
             rmsg_icecast = "";
             rmsg_program = "";
-            rmsg_stat[0] = ""; rmsg_stat[1] = ""; rmsg_stat[2] = ""; rmsg_stat[3] = "";
+            rmsg_stat[0] = "";
+            rmsg_stat[1] = "";
+            rmsg_stat[2] = "";
+            rmsg_stat[3] = "";
             if (!test_ip(tbIPcdc.Text, "IP кодека"))
             {
                 MessageBox.Show("Некорректное значение IP кодека", "Ошибка");
                 return;
             }
+
             //Все порты разделены на три диапазона— общеизвестные(или системные,0—1023), зарегистрированные(или пользовательские,1024—49151)
             //и динамические(или частные,49152—65535)
             bool res = Int32.TryParse(tbPort.Text, out IPport);
@@ -809,16 +882,19 @@ namespace TCPclient
                 MessageBox.Show("Некорректный номер порта", "Ошибка");
                 return;
             }
+
             lbRegistrStat.BackColor = Color.Yellow;
             lbRegistrStat.Text = "Ждем подключения";
             lbRegistrStat.Refresh();
             //открыть новое
             //CreateTCPstream();
-            controller.CreateTCPstream(tbIPcdc.Text,IPport);//регистрация + запрос_настроек
+            controller.CreateTCPstream(tbIPcdc.Text, IPport); //регистрация + запрос_настроек
             IPcdc_str = tbIPcdc.Text;
         }
+
         private void timerTstConnect_Tick(object sender, EventArgs e)
-        {   //Interval до 12.2018 :3сек, после :4сек
+        {
+            //Interval до 12.2018 :3сек, после :4сек
             if (connect)
             {
                 SendMsg("echo tst_connect\r");
@@ -826,12 +902,14 @@ namespace TCPclient
                     LossConnect();
             }
         }
+
         void LossConnect()
         {
             connect = false;
             lbRegistrStat.BackColor = SystemColors.Control; //Color.Red;
             lbRegistrStat.Text = "Объект разорвал соединение";
         }
+
         public void SendMsg(string sMsg)
         {
             try
@@ -851,6 +929,7 @@ namespace TCPclient
                 logger.Error($"SENDMSG {e.StackTrace} {e.Message}");
             }
         }
+
         //запрос настроек с кодека
         private void btCdcOptionRqst_Click(object sender, EventArgs e)
         {
@@ -866,8 +945,10 @@ namespace TCPclient
                 MessageBox.Show("Нет подключения к объекту", "Ошибка");
                 return;
             }
+
             CdcOptionRqst();
         }
+
         public void CdcOptionRqst()
         {
             CdcOptionNetRqst();
@@ -875,8 +956,10 @@ namespace TCPclient
             CdcOptionIceRqst();
             CdcOptionOutsRqst();
         }
+
         private void CdcOptionNetRqst()
-        { //запрос сетевых настроек
+        {
+            //запрос сетевых настроек
             rmsg_net = "";
             rmsg_unicast = "";
             //SendMsg("netstat;get sound_servers\r");
@@ -886,21 +969,27 @@ namespace TCPclient
             //Thread.Sleep(100);
             //SendMsg("get sound_servers\r"); //unicast по запросу
         }
+
         private void CdcOptionFmRqst()
-        { //запрос имя/частота и состояние FMприемников 
+        {
+            //запрос имя/частота и состояние FMприемников 
             rmsg_fm = "";
             rmsg_fms = "";
             SendMsg("get fmt1;get fmt2;get fmt3;get fmt4;get fmt5;get fmt6;fm_state\r");
             //Thread.Sleep(400);
             //SendMsg("fm_state\r"); //запрос состояния FMприемников
         }
+
         private void CdcOptionIceRqst()
-        { //запрос имя/URL потоковых станций
+        {
+            //запрос имя/URL потоковых станций
             rmsg_icecast = "";
             SendMsg("url_list\r");
         }
+
         private void CdcOptionOutsRqst()
-        { //запрос назначения выходов декодеров
+        {
+            //запрос назначения выходов декодеров
             rmsg_program = "";
             SendMsg("get o1;get o2;get o3;get o4\r");
         }
@@ -910,6 +999,7 @@ namespace TCPclient
             rmsg_ls = "";
             SendMsg("Ls " + text + "\r");
         }
+
         /*===================================================*/
         private void Transmit_KeyUp(object sender, KeyEventArgs e)
         {
@@ -932,6 +1022,7 @@ namespace TCPclient
                     break;
             }
         }
+
         private void btSentCmd_Click(object sender, EventArgs e)
         {
             //if (cbTextToSent.Text != "")
@@ -950,9 +1041,10 @@ namespace TCPclient
                 if (cbTextToSent.Items.Count > 14)
                     cbTextToSent.Items.RemoveAt(0);
                 cbTextToSent.Text = "";
-                cbTextToSent.Focus();//??для COM 
+                cbTextToSent.Focus(); //??для COM 
             }
         }
+
         private void btPing_Click(object sender, EventArgs e)
         {
 #if AID_PING
@@ -962,12 +1054,14 @@ namespace TCPclient
                 //Маке addr for ping
                 PingAddr = tbIPcdc.Text;
                 if (ping_subnet) //пинговать подсеть
-                {   //выбрать подсеть, в которую входит адрес
+                {
+                    //выбрать подсеть, в которую входит адрес
                     SubnetAddr = PingAddr.Substring(0, PingAddr.LastIndexOf(".") + 1);
                     //начнем с PingAddr
                     curr_ping_addr = int.Parse(tbIPcdc.Text.Substring(PingAddr.LastIndexOf(".") + 1));
                     MsgToCon("Pinging subnet");
                 }
+
                 StartPing();
             }
             else
@@ -977,9 +1071,11 @@ namespace TCPclient
             }
 #endif
         }
+
         //19.03.2021
         string[] months = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
         public string version_dfrm = "";
+
         public void SaveVersion(string mm, string dd, string yy) //сохранить дату версии в строке формата YYYY.MM.DD
         {
             version_dfrm = yy + ".";
@@ -991,10 +1087,12 @@ namespace TCPclient
                     break;
                 }
             }
+
             if (dd.Length < 2)
                 dd = "0" + dd;
             version_dfrm += dd;
         }
+
         //
         //Читаем из файла список потоковых(ICE) станций
         void ReadStationsFile()
@@ -1015,17 +1113,21 @@ namespace TCPclient
                 MessageBox.Show(s, "Ошибка");
                 return;
             }
+
             while ((s = Rdr.ReadLine()) != null)
             {
                 if (s == "" || s.StartsWith("#"))
                     continue;
                 listURLs.Add(s);
             }
+
             Rdr.Close();
             return;
         }
+
         //
         NetEdit net_edit = null;
+
         public int EditNet_Dialog()
         {
             net_edit = new NetEdit(this);
@@ -1036,21 +1138,27 @@ namespace TCPclient
                 return 2;
             return 0;
         }
+
         FMedit fm_edit = null;
+
         public bool EditFM_Dialog()
         {
             fm_edit = new FMedit(this);
             DialogResult res = fm_edit.ShowDialog();
             return res == DialogResult.OK;
         }
+
         OpenFile open_edit = null;
+
         public bool OpenFile_Dialog(string path, bool readOnly)
         {
             open_edit = new OpenFile(this, path, readOnly);
             DialogResult res = open_edit.ShowDialog();
             return res == DialogResult.OK;
         }
+
         ICEcast icecast_edit = null;
+
         //public void Repaint_icecastedit()
         //{
         //    if (icecast_edit != null)
@@ -1063,14 +1171,18 @@ namespace TCPclient
             DialogResult res = icecast_edit.ShowDialog();
             return res == DialogResult.OK;
         }
+
         OutsCodecs program_edit = null;
+
         public bool EditProgram_Dialog()
         {
             program_edit = new OutsCodecs(this);
             DialogResult res = program_edit.ShowDialog();
             return res == DialogResult.OK;
         }
+
         public BitrStat bitrate_stat = null;
+
         private void MenuNet_Click(object sender, EventArgs e)
         {
             // ConsoleHide();
@@ -1080,14 +1192,16 @@ namespace TCPclient
             else if (res == 1)
                 CdcOptionNetRqst(); //перезапросить параметры, если применяли без перезагрузки
         }
+
         private void MenuFM_Click(object sender, EventArgs e)
         {
             ConsoleHide();
             bool ok = EditFM_Dialog();
             if (ok) //перезапросить параметры
                 CdcOptionFmRqst(); //если меняли без перезагрузки кодека
-                                   //WaitCdcReboot(); //если с перезагрузкой
+            //WaitCdcReboot(); //если с перезагрузкой
         }
+
         private void MenuStreamRadio_Click(object sender, EventArgs e)
         {
             ConsoleHide();
@@ -1096,14 +1210,16 @@ namespace TCPclient
                 CdcOptionIceRqst();
             //WaitCdcReboot(); //если с перезагрузкой кодека
         }
+
         private void MenuProgram_Click(object sender, EventArgs e)
         {
             ConsoleHide();
             bool ok = EditProgram_Dialog();
-            if (ok)  //перезапросить параметры
+            if (ok) //перезапросить параметры
                 CdcOptionOutsRqst();
             //CdcOptionRqst();
         }
+
         private void MenuConsole_Click(object sender, EventArgs e)
         {
             if (!tabControl.Visible)
@@ -1115,17 +1231,20 @@ namespace TCPclient
             else
                 ConsoleHide();
         }
+
         private void MenuStat_Click(object sender, EventArgs e)
         {
             ConsoleHide();
             bitrate_stat = new BitrStat(this);
             bitrate_stat.ShowDialog();
         }
+
         void ConsoleHide()
         {
             tabControl.Visible = false;
             this.Height = 170;
         }
+
         private void MenuSentfile_Click(object sender, EventArgs e)
         {
             ConsoleHide();
@@ -1134,17 +1253,21 @@ namespace TCPclient
             //{
             //}
         }
+
         Sentfiles sentfl = null;
+
         public bool Sentfile_Dialog()
         {
             sentfl = new Sentfiles(this, tbIPcdc.Text);
             DialogResult res = sentfl.ShowDialog();
             return res == DialogResult.OK;
         }
+
         private void EditCodecForm_Click(object sender, EventArgs e)
         {
             ConsoleHide();
         }
+
         //если меняли с перезагрузкой кодека:
         // подождать, пока перезапустится(60..90 сек) и перерегистрироваться с перезапросом параметров
         void WaitCdcReboot()
@@ -1170,8 +1293,12 @@ namespace TCPclient
         private bool ping_stop = true, set_next_ping_addr, ping_subnet = false;
         private string PingAddr, SubnetAddr;
         int pings_num, pings_tout;
-        const int GRP_PINGS_RPT = 1, GRP_PINGS_TOUT = 200,
-            PINGS_RPT = 3, PINGS_TOUT = 2000;
+
+        const int GRP_PINGS_RPT = 1,
+            GRP_PINGS_TOUT = 200,
+            PINGS_RPT = 3,
+            PINGS_TOUT = 2000;
+
         //Если делать Ping в отдельном потоке:
         //Can be used to notify when the operation completes
         //Уведомляет ожидающий поток о том, что произошло событие
@@ -1189,6 +1316,7 @@ namespace TCPclient
                 pings_num = PINGS_RPT;
                 pings_tout = PINGS_TOUT;
             }
+
             MsgToCon("Pinging " + PingAddr + " with 32 bytes of data:");
             //Reset the number of pings
             pingsSent = 0;
@@ -1196,6 +1324,7 @@ namespace TCPclient
             //Send the ping
             SendPing();
         }
+
         private void SendPing()
         {
             if (ping_stop)
@@ -1205,12 +1334,13 @@ namespace TCPclient
             //Jump through 50(30) routing nodes tops, and don't fragment the packet
             PingOptions packetOptions = new PingOptions(30, true);
             //Send the ping asynchronously (Ttl=128 по умолчанию)
-            pingSender.SendAsync(PingAddr, pings_tout, packetData, packetOptions);//, resetEvent);
-                                                                                  //Если Ping в отдельном потоке, можно заблокировать:
-                                                                                  //resetEvent.WaitOne()- Блокирует текущий поток до получения сигнала объектом WaitHandle
-                                                                                  //или resetEvent.WaitOne(int ms)- Блокирует текущий поток до получения текущим дескриптором WaitHandle
-                                                                                  // сигнала, используя 32-разрядное целочисленное значение со знаком для указания интервала времени
+            pingSender.SendAsync(PingAddr, pings_tout, packetData, packetOptions); //, resetEvent);
+            //Если Ping в отдельном потоке, можно заблокировать:
+            //resetEvent.WaitOne()- Блокирует текущий поток до получения сигнала объектом WaitHandle
+            //или resetEvent.WaitOne(int ms)- Блокирует текущий поток до получения текущим дескриптором WaitHandle
+            // сигнала, используя 32-разрядное целочисленное значение со знаком для указания интервала времени
         }
+
         private void pingSender_Complete(object sender, PingCompletedEventArgs e)
         {
             set_next_ping_addr = true;
@@ -1233,6 +1363,7 @@ namespace TCPclient
                 //Call the method that displays the ping results, and pass the information with it
                 ShowPingResults(e.Reply);
             }
+
             if (set_next_ping_addr)
             {
                 if (ping_subnet && (++curr_ping_addr <= 255))
@@ -1244,6 +1375,7 @@ namespace TCPclient
                 }
             }
         }
+
         public void ShowPingResults(PingReply pingResponse)
         {
             if (pingResponse == null)
@@ -1257,13 +1389,14 @@ namespace TCPclient
                 //We got a response, let's see the statistics
                 pingsRec++;
                 MsgToCon("Reply from " + pingResponse.Address.ToString() + ": bytes=" + pingResponse.Buffer.Length
-                    + " time=" + pingResponse.RoundtripTime + "ms TTL=" + pingResponse.Options.Ttl);
+                         + " time=" + pingResponse.RoundtripTime + "ms TTL=" + pingResponse.Options.Ttl);
             }
             else
             {
                 //The packet didn't get back as expected, explain why
                 MsgToCon("Ping was unsuccessful: " + pingResponse.Status);
             }
+
             //Increase the counter so that we can keep track of the pings sent
             //пингуем обьект:3пинга, пингуем подсеть:1пинг
             if (++pingsSent < pings_num)
@@ -1277,7 +1410,7 @@ namespace TCPclient
                 {
                     /* string HostName = "?";
                     try
-                    { 
+                    {
                         //HostName = System.Net.Dns.GetHostByAddress(PingAddr).HostName; //obsolved
                         HostName = System.Net.Dns.GetHostEntry(PingAddr).HostName;
                         //IPHostEntry IPhe= System.Net.Dns.GetHostEntry(PingAddr);
@@ -1290,13 +1423,13 @@ namespace TCPclient
                       //Для БПР с linux: GetHostByAddress дает ошибку 11004 WSANO_DATA
                       //Valid name, no data record of requested type.
                       //The requested name is valid and was found in the database, but it does not have
-                      //the correct associated data being resolved for. The usual example for this is 
+                      //the correct associated data being resolved for. The usual example for this is
                       //a host name-to-address translation attempt (using gethostbyname or WSAAsyncGetHostByName)
-                      //which uses the DNS (Domain Name Server). An MX record is returned 
+                      //which uses the DNS (Domain Name Server). An MX record is returned
                       //but no A record—indicating the host itself exists, but is not directly reachable.
                     }*/
                     MsgToCon("------ Пинг " + PingAddr + "  Отправлено: "
-                            + pingsSent + ". Получено:" + pingsRec);
+                             + pingsSent + ". Получено:" + pingsRec);
                 }
             }
         }
@@ -1312,6 +1445,7 @@ namespace TCPclient
             statStrip.Visible = false;
             MsgToCon("\n--- Интерфейс: Ethernet\r\n");
         }
+
         private void rbCOM_Click(object sender, EventArgs e)
         {
             intrf_com = true;
@@ -1329,11 +1463,14 @@ namespace TCPclient
             statStrip.Visible = true;
             MsgToCon("\n--- Интерфейс: COM-порт\r\n");
         }
+
         bool con_pause = false;
+
         private void btClearCon_Click(object sender, EventArgs e)
         {
             ConsoleText.Clear();
         }
+
         private void btConsolePause_Click(object sender, EventArgs e)
         {
             if (con_pause)
@@ -1366,6 +1503,7 @@ namespace TCPclient
 
                     //  ReadRemoteData();
                 }
+
                 //Получение списка дисков
                 DriveInfo[] allDrives = DriveInfo.GetDrives();
                 foreach (DriveInfo d in allDrives)
@@ -1387,7 +1525,6 @@ namespace TCPclient
 
         private void tabControl_TabIndexChanged(object sender, EventArgs e)
         {
-
         }
 
         private void comboBoxDriveInfo_SelectedIndexChanged(object sender, EventArgs e)
@@ -1396,7 +1533,6 @@ namespace TCPclient
             textLocalPath.Clear();
             textLocalPath.Text = selectedState;
             LocalRefresh();
-
         }
 
         private void LocalRefresh()
@@ -1417,8 +1553,10 @@ namespace TCPclient
                 foreach (string file in files)
                     AddDataInListView(file, false);
             }
-            catch  //Устройство (например CD-ROM) может быть не готов
-            { }
+            catch(Exception e) //Устройство (например CD-ROM) может быть не готов
+            {
+                MessageBox.Show(e.Message);
+            }
         }
 
 
@@ -1433,10 +1571,10 @@ namespace TCPclient
             else
             {
                 item = new ListViewItem(fInfo.Name);
-
             }
+
             if ((fInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
-                item.SubItems.Add("");  //Size
+                item.SubItems.Add(""); //Size
             else
                 item.SubItems.Add(fInfo.Length.ToString());
             item.SubItems.Add(fInfo.LastAccessTime.ToString());
@@ -1455,7 +1593,6 @@ namespace TCPclient
                 sAtr = sAtr + "f";
             item.SubItems.Add(sAtr);
             listViewLocal.Items.Add(item);
-
         }
 
         private void textPath_TextChanged(object sender, EventArgs e)
@@ -1492,7 +1629,6 @@ namespace TCPclient
                         OpenFile_Dialog(path, true);
                     else
                         OpenFile_Dialog(path, false);
-                    return;
                 }
                 else
                 {
@@ -1510,11 +1646,18 @@ namespace TCPclient
             LocalEnter();
         }
 
+        private void listViewLocal_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                contextMenuStrip1.Show(MousePosition, ToolStripDropDownDirection.Right);
+            }
+        }
+
         private void listViewRemote_DoubleClick(object sender, EventArgs e)
         {
             //TODO
             RemoteEnter();
-
         }
 
 
@@ -1552,7 +1695,8 @@ namespace TCPclient
 
             foreach (string[] file in result)
             {
-                ListViewItem item = new ListViewItem(new[] { file[0], file[1], String.Concat(file[2] + " ", file[3]), file[4] });
+                ListViewItem item = new ListViewItem(new[]
+                    { file[0], file[1], String.Concat(file[2] + " ", file[3]), file[4] });
                 listViewRemote.Items.Add(item);
             }
         }
@@ -1571,7 +1715,7 @@ namespace TCPclient
                 string path = textRemotePath.Text.TrimEnd('/');
                 textRemotePath.Text = path.Substring(0, path.LastIndexOf("/") + 1);
                 CdcOptionLsRqst(textRemotePath.Text);
-                
+
                 //listViewRemote.Refresh();
                 //ReadRemoteData();
                 //SendMsg("Ls " + textRemotePath.Text + "\r");
@@ -1582,7 +1726,7 @@ namespace TCPclient
                 System.IO.FileInfo file = new System.IO.FileInfo(sFile);
                 if (!items[0].SubItems[3].Text.Contains("/"))
                 {
-                    string path = @"" + textRemotePath.Text  + file.Name;
+                    string path = @"" + textRemotePath.Text + file.Name;
 
                     // if ((file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                     if (items[0].SubItems[3].Text.Contains("r"))
@@ -1590,9 +1734,9 @@ namespace TCPclient
                     else
                         OpenFile_Dialog(path, false);
                     return;
-                }else
+                }
+                else
                 {
-
                     textRemotePath.Text = textRemotePath.Text + file.Name.ToString() + "/";
                     //TODO
                     // CdcOptionLsRqst(textRemotePath.Text);
@@ -1635,6 +1779,7 @@ namespace TCPclient
                             ConsoleText.Lines[0].Remove(0);
                     }
             }
+
             s = "\n" + s;
 #if COM_PORT
             WriteLogFile(s);
@@ -1720,15 +1865,17 @@ namespace TCPclient
         {
             AddMsgToCon(s, true);
         }
+
         private void PutCurrLineToCon(string s)
         {
             AddMsgToCon(s, false);
         }
+
         public void AddMsgToCon(string s, bool newline)
         {
             if (con_pause || !paConsole.Visible)
                 return;
-            
+
             if (this.WindowState == FormWindowState.Minimized) //наша форма свернута
                 return; //не выводить, иначе через некоторое время заклинивает
             Invoke((MethodInvoker)(() =>
@@ -1752,6 +1899,7 @@ namespace TCPclient
                                 ConsoleText.Lines[0].Remove(0);
                         }
                 }
+
                 if (newline) // || (ConsoleText.Lines.Length > 0
                     //   && ConsoleText.Lines[ConsoleText.Lines.Length - 1].Length >= 80))
                     s = "\r\n" + s;
@@ -1759,10 +1907,9 @@ namespace TCPclient
                     s = s.Replace("\n", "\r\n"); //формат кодека 
                 ConsoleText.AppendText(s);
                 WriteLogFile(s);
-
             }));
-            
         }
+
         private void PortMode_Set()
         {
             my_serial.BaudRate = int.Parse(lbBaud.Text);
@@ -1795,6 +1942,7 @@ namespace TCPclient
                         return 0;
                     }
                 }
+
                 // Кириллица из Unicode в Windows (!не вся):
                 // CU= 0x400 | (CW-176)  :   CW= (CU&0x7F)+176
                 wBytes = my_serial.Encoding.GetBytes(s);
@@ -1807,17 +1955,18 @@ namespace TCPclient
                 {
                     if (enabl_dbg_msg)
                         PutNewLineToCon("WriteToCom fail: " + ex.GetType().Name
-                            + ": " + ex.Message);
+                                                            + ": " + ex.Message);
                 }
                 //!!или: установить  my_serial.NewLine= "\r";
                 //my_serial.WriteLine(s); // записывает строку+SerialPort.NewLine(default:\r\n) в вых.буфер 
             }
+
             return 0;
         }
 #endif //COM_PORT
         /* Получил по TCP:
         Ok netstat :
-        : type cs Intel(R) Celeron(R) CPU 2.80GHz  kernel 2.6.19.7 
+        : type cs Intel(R) Celeron(R) CPU 2.80GHz  kernel 2.6.19.7
         : ident 5
         : dhcp0 0
         : gateway 192.168.0.99
@@ -1825,22 +1974,22 @@ namespace TCPclient
         : mask0 255.255.255.0
         : dns 192.168.0.99
         : node1 192.168.0.161
-        : node2 
-        : node3 
-        : node4 
+        : node2
+        : node3
+        : node4
         : multicast 224.22.41.16
-        : ts1 
-        : ts2 
-        : ts3 
-        : ts4 
+        : ts1
+        : ts2
+        : ts3
+        : ts4
         :.
-        Ok get: sound_servers: 
+        Ok get: sound_servers:
         Ok get: fmt1: 105.70 Ретро ФМ
         Ok get: fmt2: 101.00 Радио Дача
         Ok get: fmt3: 103.50 Радио 3
         Ok get: fmt4: 105.00 Love Radio
-        Ok get: fmt5: 
-        Ok get: fmt6: 
+        Ok get: fmt5:
+        Ok get: fmt6:
         Ok get fm_state :
         : fms1
         : fms2
@@ -1872,7 +2021,7 @@ namespace TCPclient
             { 
 	            fixed ( byte* b = &Bin[0] )
 	            { 
-                    _text= Marshal.PtrToStringAnsi( (System.IntPtr)b,Bin.Length );   
+                    _text = Marshal.PtrToStringAnsi( (System.IntPtr)b,Bin.Length );   
                 }
             }
             public int  Length 
@@ -1911,7 +2060,7 @@ namespace TCPclient
         }
 #endif //PROB_QUEUE
         //delegate void GetCharsDelegate(/*bool print*/);
-        void GetChars(/*bool print*/)
+        void GetChars( /*bool print*/)
         {
             int Rcvd = my_serial.BytesToRead;
             //      = my_serial.ReceivedBytesThreshold; //кол-во байт во вход.буфере до возникн-я прер-я прм
@@ -1942,6 +2091,7 @@ namespace TCPclient
 
             Parse(Rcvd, RecBytes);
         }
+
         string s = "",
             msg_t = "";
 #if PARSE_MSG
@@ -1963,19 +2113,19 @@ namespace TCPclient
                 // c = (char)RecBytes[0];
                 if (c == '\n')
                     break;
-
             }
+
             return line;
         }
-        
+
         void Parse()
         {
             string str = "";
             while (true)
             {
                 str = GetLine();
-               // string s1 = str;
-                if ( !str.Contains("tst_connect") && !findcdcs)
+                // string s1 = str;
+                if (!str.Contains("tst_connect") && !findcdcs)
                     AddMsgToCon(str, true);
                 if (!intrf_com)
                 {
@@ -1995,11 +2145,13 @@ namespace TCPclient
                             lbRegistrStat.BackColor = Color.Yellow;
                             lbRegistrStat.Text = "Нет поддержки настроек";
                         }
+
                         cdc_newver = false;
                         //s = "";
                         //return;
                     }
                 }
+
                 if (str.StartsWith("Ok version"))
                 {
                     //PutNewLineToCon(s);
@@ -2008,6 +2160,7 @@ namespace TCPclient
                     if (ss.Length > 5)
                         SaveVersion(ss[3], ss[4], ss[5]);
                 }
+
                 if (str.StartsWith("Ok netstat"))
                 {
                     rmsg_net = str;
@@ -2017,10 +2170,11 @@ namespace TCPclient
                         rmsg_net += str;
                         AddMsgToCon(str, true);
                         if (str.StartsWith(":."))
-                            break;        
+                            break;
                     }
                 }
-                if(str.StartsWith("sound_servers: "))
+
+                if (str.StartsWith("sound_servers: "))
                 {
                     rmsg_unicast = str;
                     while (true)
@@ -2029,10 +2183,11 @@ namespace TCPclient
                         rmsg_unicast += str;
                         AddMsgToCon(str, true);
                         if (str.StartsWith(":."))
-                            break;      
+                            break;
                     }
                 }
-                if(str.StartsWith("Ok get: fmt"))
+
+                if (str.StartsWith("Ok get: fmt"))
                 {
                     rmsg_fm = str;
                     while (true)
@@ -2041,33 +2196,36 @@ namespace TCPclient
                         rmsg_fm += str;
                         AddMsgToCon(str, true);
                         if (str.StartsWith(":."))
-                            break;      
+                            break;
                     }
                 }
+
                 if (str.StartsWith("Ok get fm_state"))
                 {
                     rmsg_fms = str;
                     while (true)
-                    {   
+                    {
                         str = GetLine();
                         rmsg_fms += str;
                         AddMsgToCon(str, true);
                         if (str.StartsWith(":."))
-                            break;  
+                            break;
                     }
                 }
+
                 if (str.StartsWith("Ok url_list"))
                 {
                     rmsg_icecast = str;
                     while (true)
-                    {   
+                    {
                         str = GetLine();
                         rmsg_icecast += str;
                         AddMsgToCon(str, true);
                         if (str.StartsWith(":."))
-                            break;      
+                            break;
                     }
                 }
+
                 if (str.StartsWith("Ok Ls"))
                 {
                     rmsg_ls = str;
@@ -2082,22 +2240,22 @@ namespace TCPclient
                             listViewRemote.Refresh();
                             break;
                         }
-                    
-                            
                     }
                 }
+
                 if (str.StartsWith("Ok get: o"))
                 {
                     rmsg_program = str;
                     while (true)
-                    {  
+                    {
                         str = GetLine();
                         rmsg_program += str;
                         AddMsgToCon(str, true);
                         if (str.StartsWith(":."))
-                            break;     
+                            break;
                     }
                 }
+
                 if (str.StartsWith("bitrst"))
                 {
                     int nchn = Convert.ToInt32(str.Substring(6, 1)) - 1;
@@ -2108,6 +2266,7 @@ namespace TCPclient
                             bitrate_stat.Parse(nchn);
                     }
                 }
+
                 if (str.StartsWith("t_cpu"))
                 {
                     t_cpu = str.Substring(6, 2) + " °C";
@@ -2116,7 +2275,7 @@ namespace TCPclient
                 }
             }
         }
-        
+
         void Parse(int Rcvd, char[] RecBytes)
         {
             for (int i = 0; i < Rcvd; i++)
@@ -2127,11 +2286,12 @@ namespace TCPclient
                 // else if (RecBytes[i] == '\r')
                 //    s += "<CR>";
                 s += RecBytes[i].ToString();
-                if (/*RecBytes[i] == '\r' ||*/ RecBytes[i] == '\n')
+                if ( /*RecBytes[i] == '\r' ||*/ RecBytes[i] == '\n')
                 {
                     //!! по IP строка заканч-ся \n ,по COM- \r\n
                     string s1 = s.Substring(0, s.Length - 1); //убрать \n
-                    if (/*s1.Length > 0 &&*/ /*s1 != "\n" &&*/ /*s1 != "\r" &&*/ !s1.Contains("tst_connect") && !findcdcs)
+                    if ( /*s1.Length > 0 &&*/ /*s1 != "\n" &&*/ /*s1 != "\r" &&*/
+                        !s1.Contains("tst_connect") && !findcdcs)
                         AddMsgToCon(s1, true);
                     if (!intrf_com)
                     {
@@ -2151,11 +2311,13 @@ namespace TCPclient
                                 lbRegistrStat.BackColor = Color.Yellow;
                                 lbRegistrStat.Text = "Нет поддержки настроек";
                             }
+
                             cdc_newver = false;
                             //s = "";
                             //return;
                         }
                     }
+
                     if (curr_list > 0)
                     {
                         msg_t += s;
@@ -2180,6 +2342,7 @@ namespace TCPclient
                             msg_t = "";
                         }
                     }
+
                     int ind;
                     //19.03.2021
                     if (s.StartsWith("Ok version"))
@@ -2190,6 +2353,7 @@ namespace TCPclient
                         if (ss.Length > 5)
                             SaveVersion(ss[3], ss[4], ss[5]);
                     }
+
                     //
                     //if (s.IndexOf("Ok netstat") >= 0)
                     if (s.StartsWith("Ok netstat"))
@@ -2212,6 +2376,7 @@ namespace TCPclient
                             {
                                 rmsg_fm += s.Substring(ind);
                             }
+
                             //ind = s.IndexOf("Ok get fm_state");
                             //if (ind >= 0)
                             if (s.StartsWith("Ok get fm_state"))
@@ -2219,6 +2384,7 @@ namespace TCPclient
                                 curr_list = 2;
                                 msg_t = s; // "";
                             }
+
                             //ind = s.IndexOf("Ok url_list");
                             //if (ind >= 0)
                             if (s.StartsWith("Ok url_list"))
@@ -2226,18 +2392,21 @@ namespace TCPclient
                                 curr_list = 3;
                                 msg_t = s;
                             }
+
                             if (s.StartsWith("Ok Ls"))
                             {
                                 curr_list = 4;
                                 msg_t = s;
                             }
                         }
+
                         ind = s.IndexOf("Ok get: o");
                         if (ind >= 0)
                         {
                             curr_list = 0;
                             rmsg_program += s.Substring(ind);
                         }
+
                         ind = s.IndexOf("bitrst");
                         if (ind >= 0)
                         {
@@ -2250,6 +2419,7 @@ namespace TCPclient
                                     bitrate_stat.Parse(nchn);
                             }
                         }
+
                         ind = s.IndexOf("t_cpu");
                         if (ind >= 0)
                         {
@@ -2259,6 +2429,7 @@ namespace TCPclient
                                 bitrate_stat.ShowTcpu();
                         }
                     }
+
                     s = "";
                 }
             }
@@ -2296,34 +2467,41 @@ namespace TCPclient
             } // прошли все принятые байты 
             if (s.Length > 0)
                 PutCurrLineToCon(s);
-            s= "";
+            s = "";
 #endif
         }
+
         private void myserial_DtRec(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
             if (intrf_com)
                 GetChars();
         }
+
         private void myserial_ErrRec(object sender, System.IO.Ports.SerialErrorReceivedEventArgs e)
-        {   //Received byte error
+        {
+            //Received byte error
             if (enabl_dbg_msg)
                 PutNewLineToCon("{E:" + e.EventType.ToString() + "}");
         }
+
         private void myserial_PinChngd(object sender, System.IO.Ports.SerialPinChangedEventArgs e)
         {
             if (my_serial.IsOpen)
             {
-                tSStatLbPinStat.Text = "RTS_CTS_handshake:" + (RTShandshake ? "Yes" : "No") + "   CD:" + my_serial.CDHolding
-                    + "   DSR:" + my_serial.DsrHolding + "   CTS:" + my_serial.CtsHolding;
+                tSStatLbPinStat.Text = "RTS_CTS_handshake:" + (RTShandshake ? "Yes" : "No") + "   CD:" +
+                                       my_serial.CDHolding
+                                       + "   DSR:" + my_serial.DsrHolding + "   CTS:" + my_serial.CtsHolding;
                 //+"  RtsEnable "+ my_serial.RtsEnable;
             }
         }
+
         private void lbBaud_SelIndChgd(object sender, System.EventArgs e)
         {
             if (lbBaud.SelectedIndex < 0)
                 return;
-            PortMode_Set();//(int.Parse(lbBaud.Items[lbBaud.SelectedIndex].ToString()));
+            PortMode_Set(); //(int.Parse(lbBaud.Items[lbBaud.SelectedIndex].ToString()));
         }
+
         private void btOpen_Click(object sender, EventArgs e)
         {
             string msg = null;
@@ -2353,9 +2531,10 @@ namespace TCPclient
                 catch (Exception ex)
                 {
                     //operation not be performed because the specified part of the file is locked
-                    PutNewLineToCon("Operation <CLOSE> could not be performed: " + ex.Message);//ex.GetType().Name);
+                    PutNewLineToCon("Operation <CLOSE> could not be performed: " + ex.Message); //ex.GetType().Name);
                 }
             }
+
             if (msg != null)
                 PutNewLineToCon("Порт " + my_serial.PortName + msg);
             if (my_serial.IsOpen)
@@ -2369,8 +2548,10 @@ namespace TCPclient
                 tSStatLbPinStat.Text = " Closed";
                 btOpen.BackColor = Color.Tomato;
             }
+
             statStrip.Refresh();
         }
+
         private void Nport_chngd(object sender, EventArgs e)
         {
             if (my_serial.PortName != "COM") //чтобы не открывать при заполнении UpDown из .config
@@ -2380,6 +2561,7 @@ namespace TCPclient
                 btOpen_Click(null, null);
             }
         }
+
         private void btLogEnbl_Click(object sender, EventArgs e)
         {
             log_enbl = !log_enbl;
@@ -2394,14 +2576,15 @@ namespace TCPclient
             if (log_enbl)
             {
                 FileStream wrFStream = new FileStream("term.log",
-                        FileMode.Append, FileAccess.Write); //создать | перезаписать
+                    FileMode.Append, FileAccess.Write); //создать | перезаписать
                 StreamWriter sWrt = new StreamWriter(wrFStream, System.Text.Encoding.GetEncoding("windows-1251"));
                 if (first_rec)
                 {
                     sWrt.Write("\r\n\r\n++++++++++ Протокол открыт [" + DateTime.Today.ToLongDateString() +
-                        " " + DateTime.Now.ToLongTimeString() + "]\r\n");
+                               " " + DateTime.Now.ToLongTimeString() + "]\r\n");
                     first_rec = false;
                 }
+
                 sWrt.Write(s);
                 sWrt.Close();
             }
@@ -2437,7 +2620,7 @@ namespace TCPclient
                 lbRegistrStat.Text = "Нет поддержки настроек";
             }
         }
-        
+
         public void SetLabelStatus(string status)
         {
             switch (status)
@@ -2844,7 +3027,7 @@ namespace TCPclient
             return minus ? -int.Parse(s) : int.Parse(s);
         }
 
-#endif  //PROB_CDCMESSAGE
+#endif //PROB_CDCMESSAGE
         ////
         /***********************************************************/
         /*      string file_to_send = "";
@@ -2909,7 +3092,119 @@ namespace TCPclient
                     if (Visible)
                         Redraw_Control();
                 } */
+        private void showStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            string sFile = items[0].Text;
+
+            if (!items[0].Text.Equals(".."))
+            {
+                System.IO.FileInfo file = new System.IO.FileInfo(sFile);
+                if (!items[0].SubItems[3].Text.Contains("/"))
+                {
+                    string path = @"" + textLocalPath.Text + "\\" + file.Name;
+
+                    // if ((file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    if (items[0].SubItems[3].Text.Contains("r"))
+                        OpenFile_Dialog(path, true);
+                    else
+                        OpenFile_Dialog(path, false);
+                }
+            }
+        }
+
+        private void contextMenuStrip1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.F3:
+                    showStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F4:
+                    editStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F5:
+                    copyToolStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F6:
+                    transferStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F7:
+                    createStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F8:
+                    deleteStripMenuItem_Click(sender, e);
+                    break;
+            }
+        }
+
+        private void editStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void transferStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void createStripMenuItem_Click(object sender, EventArgs e)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private void deleteStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            string sFile = items[0].Text;
+
+            if (!items[0].Text.Equals(".."))
+            {
+                string path = @"" + textLocalPath.Text + "\\" + sFile;
+
+                DialogResult result;
+                if (items[0].SubItems[3].Text.Contains("/"))
+                {
+                    DirectoryInfo directoryInfo = new DirectoryInfo(path);
+                    
+                    result = MessageBox.Show($"Вы точно хотите удалить папку {directoryInfo.Name}?",
+                        "Удаление каталога", MessageBoxButtons.YesNo);
+                    
+                    if(result==DialogResult.Yes)
+                        if (directoryInfo.Exists)
+                        {
+                            directoryInfo.Delete();
+                            LocalRefresh();
+                        }
+                }
+                else
+                {
+                    System.IO.FileInfo file = new System.IO.FileInfo(path);
+                    result = MessageBox.Show($"Вы точно хотите удалить файл {file.Name}?",
+                        "Удаление файла", MessageBoxButtons.YesNo);
+                    
+                    if(result==DialogResult.Yes)
+                        if (file.Exists)
+                        {
+                            file.Delete();
+                            LocalRefresh();
+                        }
+                }
+            }
+        }
     }
+
     /*======================*/
     static class Program
     {
