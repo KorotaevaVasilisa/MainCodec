@@ -240,14 +240,6 @@ namespace TCPclient
                 if (str.StartsWith("Ok get: o"))
                 {
                     MyParentForm.rmsg_program = str;
-                    while (true)
-                    {
-                        str = GetLine();
-                        MyParentForm.rmsg_program += str;
-                        MyParentForm.AddMsgToCon(str, true);
-                        if (str.StartsWith(":."))
-                            break;
-                    }
                 }
 
                 if (str.StartsWith("bitrst"))

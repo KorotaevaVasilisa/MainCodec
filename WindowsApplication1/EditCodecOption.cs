@@ -1582,7 +1582,7 @@ namespace TCPclient
                 System.IO.FileInfo file = new System.IO.FileInfo(sFile);
                 if (!items[0].SubItems[3].Text.Contains("/"))
                 {
-                    string path = @"" + textRemotePath.Text + "\\" + file.Name;
+                    string path = @"" + textRemotePath.Text  + file.Name;
 
                     // if ((file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
                     if (items[0].SubItems[3].Text.Contains("r"))
@@ -1590,8 +1590,7 @@ namespace TCPclient
                     else
                         OpenFile_Dialog(path, false);
                     return;
-                }
-                else
+                }else
                 {
 
                     textRemotePath.Text = textRemotePath.Text + file.Name.ToString() + "/";
