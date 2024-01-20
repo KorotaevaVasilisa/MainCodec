@@ -16,7 +16,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using log4net;
-using log4net.Repository.Hierarchy;
 
 //using File = System.IO.File;
 
@@ -72,8 +71,6 @@ namespace TCPclient
             {
                 MsgToCon("Ошибка в файле конфигурации. " + e.Message);
             }
-
-            return;
         }
 #if COM_PORT
         void ReadComConfig()
@@ -338,80 +335,6 @@ namespace TCPclient
         public string t_cpu = "";
         string StationsFile = Application.StartupPath + "\\" + "stations.txt";
         public List<string> listURLs = new List<string>();
-
-        void CreateTCPstream()
-        {
-            Ping pingsender = new Ping();
-            PingOptions options = new PingOptions();
-            options.DontFragment = true;
-            byte[] buffer = Encoding.ASCII.GetBytes("test_ping");
-            try
-            {
-                //попингуем
-                PingReply reply = pingsender.Send(tbIPcdc.Text, 2, buffer, options);
-                if (reply != null && reply.Status == IPStatus.Success)
-                {
-                    //Есть в сети
-                }
-                else
-                {
-                    lbRegistrStat.Text = "Нет в сети";
-                    return;
-                }
-
-                //создание TCP_клиента и нитки на чтение
-                //  закрыть тек.подключение
-                if (netstream != null)
-                    netstream.Close();
-                if (tcp_client != null)
-                    tcp_client.Close();
-                //tcp_client = new TcpClient(tbIPcdc.Text, IPport); //до 06.2019
-                tcp_client = new TcpClient();
-                var result = tcp_client.BeginConnect(tbIPcdc.Text, IPport, null, null);
-                bool success = result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(3), true);
-                if (success)
-                {
-                    if (!tcp_client.Connected)
-                        throw new SocketException(10061); //Порт закрыт
-                }
-                else
-                {
-                    throw new SocketException(10060); //Connection timed out
-                }
-
-                //
-                netstream = tcp_client.GetStream();
-
-                if (!rtcp_Started)
-                {
-                    rtcp_Thread = new Thread(new ThreadStart(ThreadProc));
-                    rtcp_Thread.IsBackground = true;
-                    rtcp_Started = true;
-                    rtcp_Thread.Start();
-                }
-
-
-                SendMsg("login temas\r"); //регистрация
-                Thread.Sleep(1000);
-                CdcOptionRqst(); //запрос настроек
-            }
-            catch (Exception e)
-            {
-                if (netstream != null)
-                    netstream.Close();
-                if (tcp_client != null)
-                    tcp_client.Close();
-                lbRegistrStat.BackColor = Color.Red;
-                lbRegistrStat.Text = "Ошибка подключения";
-                lbRegistrStat.Refresh();
-                if (e is System.Net.Sockets.SocketException)
-                    MessageBox.Show("Не поднимается соединение по TCP. Ошибка_" +
-                                    (e as System.Net.Sockets.SocketException).ErrorCode + "\n"
-                                    + e.Message + "\nПопробуйте повторить через 20сек", "Ошибка");
-                else
-                    MessageBox.Show("Не поднимается соединение по TCP\n" + e.Message, "Ошибка");
-            }
-        }
 
         private void ThreadProc()
         {
@@ -887,7 +810,7 @@ namespace TCPclient
             lbRegistrStat.Text = "Ждем подключения";
             lbRegistrStat.Refresh();
             //открыть новое
-            //CreateTCPstream();
+
             controller.CreateTCPstream(tbIPcdc.Text, IPport); //регистрация + запрос_настроек
             IPcdc_str = tbIPcdc.Text;
         }
@@ -916,7 +839,11 @@ namespace TCPclient
             {
 #if COM_PORT
                 if (intrf_com)
+                {
                     puts(sMsg + "\r\n"); //?? или \r\n
+                    byte[] data = myEncoding.GetBytes(sMsg);
+                    netstream.Write(data, 0, data.Length);
+                }
                 else
 #endif
                 {
@@ -926,7 +853,7 @@ namespace TCPclient
             }
             catch (Exception e)
             {
-                logger.Error($"SENDMSG {e.StackTrace} {e.Message}");
+                logger.Error($"SEND MSG {e.StackTrace} {e.Message}");
             }
         }
 
@@ -1499,17 +1426,20 @@ namespace TCPclient
                 if (connect)
                 {
                     CdcOptionLsRqst(textRemotePath.Text);
-                    //SendMsg("Ls " + textRemotePath.Text + "\r");
-
-                    //  ReadRemoteData();
                 }
 
                 //Получение списка дисков
-                DriveInfo[] allDrives = DriveInfo.GetDrives();
-                foreach (DriveInfo d in allDrives)
-                {
-                    comboBoxDriveInfo.Items.Add(d.Name);
-                }
+                GetDriversForComboBox();
+            }
+        }
+
+        private void GetDriversForComboBox()
+        {
+            DriveInfo[] allDrives = DriveInfo.GetDrives();
+            comboBoxDriveInfo.Items.Clear();
+            foreach (DriveInfo d in allDrives)
+            {
+                comboBoxDriveInfo.Items.Add(d.Name);
             }
         }
 
@@ -1521,10 +1451,6 @@ namespace TCPclient
                 List<string> list = new List<string>(text);
                 RemoteRefresh(list);
             }
-        }
-
-        private void tabControl_TabIndexChanged(object sender, EventArgs e)
-        {
         }
 
         private void comboBoxDriveInfo_SelectedIndexChanged(object sender, EventArgs e)
@@ -1553,7 +1479,7 @@ namespace TCPclient
                 foreach (string file in files)
                     AddDataInListView(file, false);
             }
-            catch(Exception e) //Устройство (например CD-ROM) может быть не готов
+            catch (Exception e) //Устройство (например CD-ROM) может быть не готов
             {
                 MessageBox.Show(e.Message);
             }
@@ -1593,11 +1519,6 @@ namespace TCPclient
                 sAtr = sAtr + "f";
             item.SubItems.Add(sAtr);
             listViewLocal.Items.Add(item);
-        }
-
-        private void textPath_TextChanged(object sender, EventArgs e)
-        {
-            LocalRefresh();
         }
 
         private void LocalEnter()
@@ -1715,10 +1636,6 @@ namespace TCPclient
                 string path = textRemotePath.Text.TrimEnd('/');
                 textRemotePath.Text = path.Substring(0, path.LastIndexOf("/") + 1);
                 CdcOptionLsRqst(textRemotePath.Text);
-
-                //listViewRemote.Refresh();
-                //ReadRemoteData();
-                //SendMsg("Ls " + textRemotePath.Text + "\r");
             }
             else
             {
@@ -1733,29 +1650,20 @@ namespace TCPclient
                         OpenFile_Dialog(path, true);
                     else
                         OpenFile_Dialog(path, false);
-                    return;
                 }
                 else
                 {
-                    textRemotePath.Text = textRemotePath.Text + file.Name.ToString() + "/";
-                    //TODO
-                    // CdcOptionLsRqst(textRemotePath.Text);
-                    //ReadRemoteData();
+                    textRemotePath.Text = textRemotePath.Text + file.Name + "/";
                 }
             }
         }
 
-        //TODO
         private void textRemotePath_TextChanged(object sender, EventArgs e)
         {
-            //MessageBox.Show(textRemotePath.Text);
             CdcOptionLsRqst(textRemotePath.Text);
-
-            //SendMsg("Ls " + textRemotePath.Text + "\r");
-            //ReadRemoteData();
         }
 
-        public static int CompareFiles(string[] item1, string[] item2)
+        private static int CompareFiles(string[] item1, string[] item2)
         {
             return item1[0].CompareTo(item2[0]);
         }
@@ -1763,8 +1671,8 @@ namespace TCPclient
 
         public void MsgToCon(string s)
         {
-            //           if (con_pause || !paConsole.Visible)
-            //                return;
+            if (con_pause || !paConsole.Visible)
+                return;
             if (ConsoleText.Lines.Length >= 500)
             {
                 if (this.WindowState != FormWindowState.Minimized) //наша форма не свернута
@@ -1790,6 +1698,7 @@ namespace TCPclient
 
         private void button1_Click(object sender, EventArgs e)
         {
+            GetDriversForComboBox();
             ReadRemoteData();
         }
 
@@ -3094,26 +3003,7 @@ namespace TCPclient
                 } */
         private void showStripMenuItem_Click(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
-            if (items.Count == 0)
-                return;
-
-            string sFile = items[0].Text;
-
-            if (!items[0].Text.Equals(".."))
-            {
-                System.IO.FileInfo file = new System.IO.FileInfo(sFile);
-                if (!items[0].SubItems[3].Text.Contains("/"))
-                {
-                    string path = @"" + textLocalPath.Text + "\\" + file.Name;
-
-                    // if ((file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    if (items[0].SubItems[3].Text.Contains("r"))
-                        OpenFile_Dialog(path, true);
-                    else
-                        OpenFile_Dialog(path, false);
-                }
-            }
+            LocalEnter();
         }
 
         private void contextMenuStrip1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -3177,11 +3067,11 @@ namespace TCPclient
                 if (items[0].SubItems[3].Text.Contains("/"))
                 {
                     DirectoryInfo directoryInfo = new DirectoryInfo(path);
-                    
+
                     result = MessageBox.Show($"Вы точно хотите удалить папку {directoryInfo.Name}?",
                         "Удаление каталога", MessageBoxButtons.YesNo);
-                    
-                    if(result==DialogResult.Yes)
+
+                    if (result == DialogResult.Yes)
                         if (directoryInfo.Exists)
                         {
                             directoryInfo.Delete();
@@ -3193,8 +3083,8 @@ namespace TCPclient
                     System.IO.FileInfo file = new System.IO.FileInfo(path);
                     result = MessageBox.Show($"Вы точно хотите удалить файл {file.Name}?",
                         "Удаление файла", MessageBoxButtons.YesNo);
-                    
-                    if(result==DialogResult.Yes)
+
+                    if (result == DialogResult.Yes)
                         if (file.Exists)
                         {
                             file.Delete();
