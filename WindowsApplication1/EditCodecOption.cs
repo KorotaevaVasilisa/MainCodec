@@ -927,6 +927,20 @@ namespace TCPclient
             SendMsg("Ls " + text + "\r");
         }
 
+        private void CdcOptionSflOpenrRqst(string nameFile)
+        {
+            rmsg_sfl = "";
+            SendMsg($"sfl openr {nameFile}\r");
+        }
+
+        public void CdcOptionSflRRqst()
+        {
+            //Invoke((MethodInvoker)(()=>
+            SendMsg("sfl r\r");
+            //    ));
+            
+        }
+
         /*===================================================*/
         private void Transmit_KeyUp(object sender, KeyEventArgs e)
         {
@@ -1571,7 +1585,7 @@ namespace TCPclient
         {
             if (e.Button == MouseButtons.Right)
             {
-                contextMenuStrip1.Show(MousePosition, ToolStripDropDownDirection.Right);
+                localMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
             }
         }
 
@@ -3093,6 +3107,71 @@ namespace TCPclient
                 }
             }
         }
+
+        private void remoteMenuStrip_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.F3:
+                    showRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F4:
+                    editRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F5:
+                    copyRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F6:
+                    transferRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F7:
+                    createRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F8:
+                    deleteRemoteStripMenuItem_Click(sender, e);
+                    break;
+            }
+        }
+
+
+        private void showRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void editRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void copyRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        public string rmsg_sfl = "";
+
+        private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            string sFile = items[0].Text;
+            rmsg_sfl = "";
+            CdcOptionSflOpenrRqst(sFile);
+        }
+
+        private void createRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void deleteRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 
     /*======================*/
