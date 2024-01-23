@@ -1,12 +1,11 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using log4net;
 
 namespace TCPclient
 {
@@ -238,96 +237,97 @@ namespace TCPclient
                     //     MyParentForm.AddMsgToCon(str, true);
                     //     MessageBox.Show(str);
                 }
-            
 
 
-            if (str.StartsWith("sfl r"))
-            {
-                if (!str.Contains("sfl r :."))
+
+                if (str.StartsWith("sfl r"))
                 {
+                    if (!str.Contains("sfl r :."))
+                    {
 
-                    MyParentForm.CdcOptionSflRRqst();
-                        
+                        MyParentForm.CdcOptionSflRRqst();
+
                         MyParentForm.rmsg_sfl += str.Substring(5);
                     }
                     else
                     {
                         byte[] textAsBytes = System.Convert.FromBase64String(MyParentForm.rmsg_sfl);
-    
-                        MessageBox.Show(System.Text.Encoding.Default.GetString(textAsBytes));
+                        //MyParentForm.rmsg_sfl = "";
+                        MyParentForm.rmsg_sfl = System.Text.Encoding.Default.GetString(textAsBytes);
+                        remoteChanged.onCopyRemoteFile();
                     }
-            }
-
-
-            if (str.StartsWith("Ok get: o"))
-            {
-                MyParentForm.rmsg_program = str;
-            }
-
-            if (str.StartsWith("bitrst"))
-            {
-                int nchn = Convert.ToInt32(str.Substring(6, 1)) - 1;
-                if (nchn < 4)
-                {
-                    MyParentForm.rmsg_stat[nchn] = str.Substring(8);
-                    if (MyParentForm.bitrate_stat != null)
-                        MyParentForm.bitrate_stat.Parse(nchn);
                 }
-            }
 
-            if (str.StartsWith("t_cpu"))
-            {
-                MyParentForm.t_cpu = str.Substring(6, 2) + " °C";
-                if (MyParentForm.bitrate_stat != null)
-                    MyParentForm.bitrate_stat.ShowTcpu();
-            }
-        }
-    }
 
-    private void ThreadProc()
-    {
-        while (rtcp_Started /*!rtcp_Finished*/)
-        {
-            Thread.Sleep(1); //2
-            if (netstream != null &&
-                netstream.CanRead) //Check if NetworkStream is readable
-            {
-                try
+                if (str.StartsWith("Ok get: o"))
                 {
-                    if (netstream.DataAvailable)
+                    MyParentForm.rmsg_program = str;
+                }
+
+                if (str.StartsWith("bitrst"))
+                {
+                    int nchn = Convert.ToInt32(str.Substring(6, 1)) - 1;
+                    if (nchn < 4)
                     {
-                        Parse();
+                        MyParentForm.rmsg_stat[nchn] = str.Substring(8);
+                        if (MyParentForm.bitrate_stat != null)
+                            MyParentForm.bitrate_stat.Parse(nchn);
                     }
                 }
-                catch (Exception e)
+
+                if (str.StartsWith("t_cpu"))
                 {
-                    logger.Error(String.Format("ERROR THREAD " + e.Message.ToString(), this, DateTime.Now));
+                    MyParentForm.t_cpu = str.Substring(6, 2) + " °C";
+                    if (MyParentForm.bitrate_stat != null)
+                        MyParentForm.bitrate_stat.ShowTcpu();
                 }
             }
         }
-    }
 
-    System.Text.Encoding myEncoding = Encoding.GetEncoding("windows-1251");
-
-
-    string GetLine()
-    {
-        string line = "";
-        byte[] RecBytes = new byte[2];
-        char c;
-        while (true)
+        private void ThreadProc()
         {
-            netstream.Read(RecBytes, 0, 1);
-
-            char[] chars = myEncoding.GetChars(RecBytes);
-            c = chars[0];
-            line += c;
-            // c = (char)RecBytes[0];
-            if (c == '\n')
-                break;
+            while (rtcp_Started /*!rtcp_Finished*/)
+            {
+                Thread.Sleep(1); //2
+                if (netstream != null &&
+                    netstream.CanRead) //Check if NetworkStream is readable
+                {
+                    try
+                    {
+                        if (netstream.DataAvailable)
+                        {
+                            Parse();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error(String.Format("ERROR THREAD " + e.Message.ToString(), this, DateTime.Now));
+                    }
+                }
+            }
         }
 
-        return line;
+        System.Text.Encoding myEncoding = Encoding.GetEncoding("windows-1251");
+
+
+        string GetLine()
+        {
+            string line = "";
+            byte[] RecBytes = new byte[2];
+            char c;
+            while (true)
+            {
+                netstream.Read(RecBytes, 0, 1);
+
+                char[] chars = myEncoding.GetChars(RecBytes);
+                c = chars[0];
+                line += c;
+                // c = (char)RecBytes[0];
+                if (c == '\n')
+                    break;
+            }
+
+            return line;
+        }
     }
-}
 }

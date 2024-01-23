@@ -65,6 +65,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CopyAndTransferWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CopyAndTransferWindow.Designer.cs">
+      <DependentUpon>CopyAndTransferWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="FMedit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +122,9 @@
       <DependentUpon>OutsCodecs.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="CopyAndTransferWindow.resx">
+      <DependentUpon>CopyAndTransferWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FMedit.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FMedit.cs</DependentUpon>

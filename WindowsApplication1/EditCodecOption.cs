@@ -4,6 +4,7 @@
 //#define PROB_CDCMESSAGE  //проба разбора сообщений от кодека по формату Tiscada
 //#define CMD_HISTORY 
 
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,7 +16,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using log4net;
 
 //using File = System.IO.File;
 
@@ -927,7 +927,7 @@ namespace TCPclient
             SendMsg("Ls " + text + "\r");
         }
 
-        private void CdcOptionSflOpenrRqst(string nameFile)
+        public void CdcOptionSflOpenrRqst(string nameFile)
         {
             rmsg_sfl = "";
             SendMsg($"sfl openr {nameFile}\r");
@@ -938,7 +938,7 @@ namespace TCPclient
             //Invoke((MethodInvoker)(()=>
             SendMsg("sfl r\r");
             //    ));
-            
+
         }
 
         /*===================================================*/
@@ -1119,6 +1119,15 @@ namespace TCPclient
         {
             program_edit = new OutsCodecs(this);
             DialogResult res = program_edit.ShowDialog();
+            return res == DialogResult.OK;
+        }
+
+        CopyAndTransferWindow cp_window = null;
+
+        public bool CopyAndTransfer_Dialog(bool copy, string output, string input, string fileName)
+        {
+            cp_window = new CopyAndTransferWindow(this, copy, output, input, fileName);
+            DialogResult res = cp_window.ShowDialog();
             return res == DialogResult.OK;
         }
 
@@ -1714,6 +1723,7 @@ namespace TCPclient
         {
             GetDriversForComboBox();
             ReadRemoteData();
+            LocalRefresh();
         }
 
 
@@ -3047,17 +3057,23 @@ namespace TCPclient
 
         private void editStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
         }
 
         private void transferStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
         }
 
         private void createStripMenuItem_Click(object sender, EventArgs e)
@@ -3136,31 +3152,49 @@ namespace TCPclient
 
         private void showRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
         }
 
         private void editRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
         }
 
         private void copyRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
+            string sFile = items[0].Text;
+            rmsg_sfl = "";
+            pathRemote = textRemotePath.Text + sFile;
+            pathLocal = $"{textLocalPath.Text}\\{sFile}";
+            CopyAndTransfer_Dialog(true, pathRemote, pathLocal, sFile);
+            
         }
 
         public string rmsg_sfl = "";
-
+        string pathRemote, pathLocal;
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
+            
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
 
             string sFile = items[0].Text;
             rmsg_sfl = "";
-            CdcOptionSflOpenrRqst(sFile);
+            pathRemote = textRemotePath.Text + sFile;
+            pathLocal = $"{textLocalPath.Text}\\{sFile}";
+            CopyAndTransfer_Dialog(false, pathRemote, pathLocal, sFile);
+            //CdcOptionSflOpenrRqst(sFile);
         }
+
+        
 
         private void createRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -3169,9 +3203,17 @@ namespace TCPclient
 
         private void deleteRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
         }
 
+        public void onCopyRemoteFile()
+        {
+            File.WriteAllText(pathLocal, rmsg_sfl);
+            //LocalRefresh();
+            //OpenFile_Dialog(pathLocal, true);
+        }
     }
 
     /*======================*/
