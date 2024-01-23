@@ -3173,12 +3173,14 @@ namespace TCPclient
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            CopyAndTransfer_Dialog(true, pathRemote, pathLocal, sFile);
+            CopyAndTransfer_Dialog(wasCopy, pathRemote, pathLocal, sFile);
             
         }
 
         public string rmsg_sfl = "";
         string pathRemote, pathLocal;
+        private bool wasCopy = true;
+
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
             
@@ -3190,7 +3192,8 @@ namespace TCPclient
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            CopyAndTransfer_Dialog(false, pathRemote, pathLocal, sFile);
+            wasCopy = false;
+            CopyAndTransfer_Dialog(wasCopy, pathRemote, pathLocal, sFile);
             //CdcOptionSflOpenrRqst(sFile);
         }
 
@@ -3211,6 +3214,11 @@ namespace TCPclient
         public void onCopyRemoteFile()
         {
             File.WriteAllText(pathLocal, rmsg_sfl);
+            if (!wasCopy)
+            {
+                //TODO delete
+            }
+            wasCopy = true;
             //LocalRefresh();
             //OpenFile_Dialog(pathLocal, true);
         }
