@@ -230,12 +230,7 @@ namespace TCPclient
 
                 if (str.StartsWith("sfl openr") && str.Contains("Ok"))
                 {
-                    //MessageBox.Show(str);
-                    // while (!str.Contains("sfl r :.")) {
                     MyParentForm.CdcOptionSflRRqst();
-                    //     str = GetLine();
-                    //     MyParentForm.AddMsgToCon(str, true);
-                    //     MessageBox.Show(str);
                 }
 
 
@@ -246,14 +241,14 @@ namespace TCPclient
                     {
 
                         MyParentForm.CdcOptionSflRRqst();
-
-                        MyParentForm.rmsg_sfl += str.Substring(5);
+                        byte[] textAsBytes = System.Convert.FromBase64String(str.Substring(5));
+                        string part  = System.Text.Encoding.Default.GetString(textAsBytes);
+                        MyParentForm.rmsg_sfl += part;
+                        int size= Encoding.Default.GetByteCount(MyParentForm.rmsg_sfl);
+                        remoteChanged.onUpdateProgressBar(size);
                     }
                     else
                     {
-                        byte[] textAsBytes = System.Convert.FromBase64String(MyParentForm.rmsg_sfl);
-                        //MyParentForm.rmsg_sfl = "";
-                        MyParentForm.rmsg_sfl = System.Text.Encoding.Default.GetString(textAsBytes);
                         remoteChanged.onCopyRemoteFile();
                     }
                 }

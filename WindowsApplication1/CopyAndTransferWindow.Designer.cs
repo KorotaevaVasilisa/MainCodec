@@ -34,11 +34,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tbTo = new System.Windows.Forms.TextBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // btCPCancel
             // 
-            this.btCPCancel.Location = new System.Drawing.Point(403, 111);
+            this.btCPCancel.Location = new System.Drawing.Point(405, 145);
             this.btCPCancel.Name = "btCPCancel";
             this.btCPCancel.Size = new System.Drawing.Size(75, 27);
             this.btCPCancel.TabIndex = 0;
@@ -48,7 +49,7 @@
             // 
             // btCPApply
             // 
-            this.btCPApply.Location = new System.Drawing.Point(484, 111);
+            this.btCPApply.Location = new System.Drawing.Point(484, 145);
             this.btCPApply.Name = "btCPApply";
             this.btCPApply.Size = new System.Drawing.Size(121, 27);
             this.btCPApply.TabIndex = 1;
@@ -91,11 +92,20 @@
             this.tbTo.Size = new System.Drawing.Size(529, 22);
             this.tbTo.TabIndex = 5;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(18, 104);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(587, 23);
+            this.progressBar1.TabIndex = 6;
+            this.progressBar1.Visible = false;
+            // 
             // CopyAndTransferWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(619, 150);
+            this.ClientSize = new System.Drawing.Size(615, 182);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.tbTo);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -117,5 +127,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbTo;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

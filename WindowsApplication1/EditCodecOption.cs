@@ -16,6 +16,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Threading;
 
 //using File = System.IO.File;
 
@@ -935,10 +936,7 @@ namespace TCPclient
 
         public void CdcOptionSflRRqst()
         {
-            //Invoke((MethodInvoker)(()=>
             SendMsg("sfl r\r");
-            //    ));
-
         }
 
         /*===================================================*/
@@ -1722,7 +1720,8 @@ namespace TCPclient
         private void button1_Click(object sender, EventArgs e)
         {
             GetDriversForComboBox();
-            ReadRemoteData();
+            CdcOptionLsRqst(textRemotePath.Text);
+            //ReadRemoteData();
             LocalRefresh();
         }
 
@@ -3166,38 +3165,35 @@ namespace TCPclient
 
         private void copyRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
-            if (items.Count == 0)
-                return;
-            string sFile = items[0].Text;
-            rmsg_sfl = "";
-            pathRemote = textRemotePath.Text + sFile;
-            pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            CopyAndTransfer_Dialog(wasCopy, pathRemote, pathLocal, sFile);
-            
+            CopyRemoteFile(wasCopy);
+            LocalRefresh();
         }
 
         public string rmsg_sfl = "";
-        string pathRemote, pathLocal;
+        private string pathRemote, pathLocal, sFile;
         private bool wasCopy = true;
+        int sizeFile;
 
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            wasCopy = false;
+            CopyRemoteFile(wasCopy);
+            LocalRefresh();
+        }
+
+        private void CopyRemoteFile(bool wasCopy)
+        {
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
 
-            string sFile = items[0].Text;
+            sFile = items[0].Text;
+            sizeFile = int.Parse(items[0].SubItems[1].Text);
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            wasCopy = false;
             CopyAndTransfer_Dialog(wasCopy, pathRemote, pathLocal, sFile);
-            //CdcOptionSflOpenrRqst(sFile);
         }
-
-        
 
         private void createRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -3209,6 +3205,15 @@ namespace TCPclient
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
+            sFile = items[0].Text;
+            DialogResult result = MessageBox.Show($"Вы точно хотите удалить файл {sFile}?",
+    "Удаление файла", MessageBoxButtons.YesNo);
+
+            if (result == DialogResult.Yes)
+            {
+                DeleteRemoteFile(sFile);
+            }
+            
         }
 
         public void onCopyRemoteFile()
@@ -3216,11 +3221,22 @@ namespace TCPclient
             File.WriteAllText(pathLocal, rmsg_sfl);
             if (!wasCopy)
             {
-                //TODO delete
+                DeleteRemoteFile(sFile);
             }
             wasCopy = true;
-            //LocalRefresh();
-            //OpenFile_Dialog(pathLocal, true);
+        }
+
+        private void DeleteRemoteFile(string sFile)
+        {
+            SendMsg($"unlink {sFile}\r");
+            CdcOptionLsRqst(textRemotePath.Text);
+            LocalRefresh();
+        }
+
+        public void onUpdateProgressBar(int size)
+        {
+            cp_window.DownloadProgress(size,sizeFile);
+    
         }
     }
 
