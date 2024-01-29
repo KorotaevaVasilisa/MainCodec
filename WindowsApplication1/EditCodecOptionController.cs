@@ -209,6 +209,8 @@ namespace TCPclient
                             break;
                     }
                 }
+                if (str.StartsWith(" Ok system:  rm -r")|| str.StartsWith(" Ok system:  mkdir"))
+                    MyParentForm.CdcOptionLsRqst();
 
                 if (str.StartsWith("Ok Ls"))
                 {
@@ -222,6 +224,7 @@ namespace TCPclient
                         {
                             string[] text = MyParentForm.rmsg_ls.Split('\r', '\n');
                             List<string> list = new List<string>(text);
+                            logger.Info(MyParentForm.rmsg_ls);
                             remoteChanged.onChanged(list);
                             break;
                         }

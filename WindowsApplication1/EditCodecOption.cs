@@ -922,7 +922,7 @@ namespace TCPclient
             SendMsg("get o1;get o2;get o3;get o4\r");
         }
 
-        private void CdcOptionLsRqst(string text = "")
+        public void CdcOptionLsRqst(string text = "")
         {
             rmsg_ls = "";
             SendMsg("Ls " + text + "\r");
@@ -3074,10 +3074,12 @@ namespace TCPclient
             if (items.Count == 0)
                 return;
         }
+        CreateFolderForm folderForm;
 
         private void createStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            folderForm = new CreateFolderForm(this, true);
+            folderForm.ShowDialog();
         }
 
         private void deleteStripMenuItem_Click(object sender, EventArgs e)
@@ -3186,9 +3188,11 @@ namespace TCPclient
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
-
+            
             sFile = items[0].Text;
             sizeFile = int.Parse(items[0].SubItems[1].Text);
+            if (items[0].SubItems[3].Text == "/")
+                return;
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
@@ -3197,21 +3201,43 @@ namespace TCPclient
 
         private void createRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            folderForm = new CreateFolderForm(this, false);
+            folderForm.ShowDialog();
         }
 
+        public void CreateFolder(bool isLocal, string nameFolder)
+        {
+            if (isLocal)
+            {
+                Directory.CreateDirectory($"{textLocalPath.Text}\\{nameFolder}");
+                LocalRefresh();
+            }
+            else
+            {
+                SendMsg($"system mkdir {textRemotePath.Text}{nameFolder}\r");
+            }
+        }
         private void deleteRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
             sFile = items[0].Text;
-            DialogResult result = MessageBox.Show($"Вы точно хотите удалить файл {sFile}?",
+            DialogResult result;
+            string atrFile = items[0].SubItems[3].Text;
+            if (atrFile == "/")
+            {
+                result = MessageBox.Show($"Вы точно хотите удалить папку {sFile}?",
+    "Удаление папки", MessageBoxButtons.YesNo);
+            }
+            else
+            {
+                result = MessageBox.Show($"Вы точно хотите удалить файл {sFile}?",
     "Удаление файла", MessageBoxButtons.YesNo);
-
+            }
             if (result == DialogResult.Yes)
             {
-                DeleteRemoteFile(sFile);
+                SendMsg($"system rm -r {sFile}\r");
             }
             
         }
@@ -3221,16 +3247,9 @@ namespace TCPclient
             File.WriteAllText(pathLocal, rmsg_sfl);
             if (!wasCopy)
             {
-                DeleteRemoteFile(sFile);
+                SendMsg($"system rm -r {sFile}\r");
             }
             wasCopy = true;
-        }
-
-        private void DeleteRemoteFile(string sFile)
-        {
-            SendMsg($"unlink {sFile}\r");
-            CdcOptionLsRqst(textRemotePath.Text);
-            LocalRefresh();
         }
 
         public void onUpdateProgressBar(int size)
