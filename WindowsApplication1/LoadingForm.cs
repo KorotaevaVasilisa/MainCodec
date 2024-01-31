@@ -13,16 +13,12 @@ namespace TCPclient
     {
         EditCodecForm editCodecForm = null;
         string path;
-        string fileName;
-        ListRemoteState state;
         public LoadingForm(EditCodecForm editCodecForm, ListRemoteState state, string fileName, string output, string input ="")
         {
             InitializeComponent();
             this.editCodecForm = editCodecForm;
             this.path = output;
             tbFrom.Text = output; tbTo.Text = input;
-            this.state = state;
-            this.fileName = fileName;
             UpdateUI(state);
         }
 
@@ -76,7 +72,7 @@ namespace TCPclient
         {
             btCPApply.Enabled = false;
             progressBar1.Visible = true;
-            editCodecForm.CdcOptionSflOpenrRqst(path);
+           editCodecForm.CdcOptionSflOpenrRqst(path);
         }
 
         public void DownloadProgress(int readed, int total)

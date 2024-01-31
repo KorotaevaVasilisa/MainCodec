@@ -7,19 +7,32 @@ namespace TCPclient
 {
     public partial class OpenFile : Form
     {
-        EditCodecForm MyParentForm = null;
+        EditCodecForm editCodecForm = null;
         string sFile = "";
         bool readOnly;
         public OpenFile(EditCodecForm form, string pathFile, bool readOnly)
         {
             InitializeComponent();
-            this.MyParentForm = form;
+            this.editCodecForm = form;
             this.DialogResult = DialogResult.Cancel;
             ReadFile(pathFile, readOnly);
             sFile = pathFile;
             this.readOnly = readOnly;
             if (readOnly)
                 saveButton.Text = "Закрыть";
+        }
+
+        public OpenFile(EditCodecForm form, ListRemoteState state, string fileName, string information)
+        {
+            InitializeComponent();
+            this.editCodecForm = form;
+            Text = fileName;
+            richTextBox1.Text = information;
+            if (state == ListRemoteState.Show)
+            {
+                richTextBox1.ReadOnly = true;
+                saveButton.Text = "Закрыть";            
+            }
         }
 
         private void ReadFile(string pathFile, bool readOnly)
@@ -33,8 +46,7 @@ namespace TCPclient
             }
             catch (IOException e)
             {
-                Console.WriteLine("The file could not be read:");
-                Console.WriteLine(e.Message);
+                MessageBox.Show(e.Message);
             }
             richTextBox1.ReadOnly = readOnly;
         }

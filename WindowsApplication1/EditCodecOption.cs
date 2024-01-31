@@ -929,10 +929,10 @@ namespace TCPclient
             SendMsg("Ls " + text + "\r");
         }
 
-        public void CdcOptionSflOpenrRqst(string nameFile)
+        public void CdcOptionSflOpenrRqst(string path)
         {
             rmsg_sfl = "";
-            SendMsg($"sfl openr {nameFile}\r");
+            SendMsg($"sfl openr {path}\r");
         }
 
         public void CdcOptionSflRRqst()
@@ -1093,6 +1093,13 @@ namespace TCPclient
         public bool OpenFile_Dialog(string path, bool readOnly)
         {
             open_edit = new OpenFile(this, path, readOnly);
+            DialogResult res = open_edit.ShowDialog();
+            return res == DialogResult.OK;
+        }
+
+        public bool OpenFile_Dialog(ListRemoteState state, string fileName, string information)
+        {
+            open_edit = new OpenFile(this, state, fileName, information);
             DialogResult res = open_edit.ShowDialog();
             return res == DialogResult.OK;
         }
@@ -1650,8 +1657,6 @@ namespace TCPclient
                 return;
 
 
-            //MessageBox.Show(sFile);
-
             if (items[0].SubItems[0].Text.Equals(".."))
             {
                 string path = textRemotePath.Text.TrimEnd('/');
@@ -1666,11 +1671,14 @@ namespace TCPclient
                 {
                     string path = @"" + textRemotePath.Text + file.Name;
 
-                    // if ((file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    if (items[0].SubItems[3].Text.Contains("r"))
-                        OpenFile_Dialog(path, true);
-                    else
-                        OpenFile_Dialog(path, false);
+                    sFile = items[0].Text;
+                    sizeFile = int.Parse(items[0].SubItems[1].Text);
+                    //TODO
+
+                    pathRemote = textRemotePath.Text + sFile;
+                    listRemoteState = ListRemoteState.Show;
+                    LoadingForm_Dialog(listRemoteState, sFile, pathRemote);
+
                 }
                 else
                 {
@@ -3216,6 +3224,7 @@ namespace TCPclient
 
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
+
             listRemoteState = ListRemoteState.Transfer;
             CopyRemoteFile(listRemoteState);
             LocalRefresh();
@@ -3234,7 +3243,7 @@ namespace TCPclient
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            LoadingForm_Dialog(state, pathRemote, pathLocal, sFile);
+            LoadingForm_Dialog(state,sFile, pathRemote, pathLocal);
         }
 
         private void createRemoteStripMenuItem_Click(object sender, EventArgs e)
@@ -3288,7 +3297,7 @@ namespace TCPclient
             {
                 case ListRemoteState.Show:
                     {
-                        MessageBox.Show(rmsg_sfl);
+                        OpenFile_Dialog(listRemoteState, sFile, rmsg_sfl);
                         break;
                     }
                 case ListRemoteState.Edit:
@@ -3308,18 +3317,27 @@ namespace TCPclient
                         break;
                     }
             }
+            listRemoteState = ListRemoteState.Inaction;
+
         }
 
         public void onUpdateProgressBar(int size)
         {
-            loading_form.DownloadProgress(size,sizeFile);
-    
+            try
+            {
+                if (listRemoteState != ListRemoteState.Inaction)
+                    loading_form.DownloadProgress(size, sizeFile);
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
 
     }
     public enum ListRemoteState
     {
+        Inaction,
         Copy,
         Transfer,
         Show,

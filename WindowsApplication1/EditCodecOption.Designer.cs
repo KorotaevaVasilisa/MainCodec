@@ -770,14 +770,14 @@
             this.createRemoteStripMenuItem,
             this.deleteRemoteStripMenuItem});
             this.remoteMenuStrip.Name = "contextMenuStrip1";
-            this.remoteMenuStrip.Size = new System.Drawing.Size(211, 176);
+            this.remoteMenuStrip.Size = new System.Drawing.Size(205, 148);
             this.remoteMenuStrip.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.remoteMenuStrip_PreviewKeyDown);
             // 
             // showRemoteStripMenuItem
             // 
             this.showRemoteStripMenuItem.Name = "showRemoteStripMenuItem";
             this.showRemoteStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.showRemoteStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.showRemoteStripMenuItem.Size = new System.Drawing.Size(204, 24);
             this.showRemoteStripMenuItem.Text = "Смотреть";
             this.showRemoteStripMenuItem.Click += new System.EventHandler(this.showRemoteStripMenuItem_Click);
             // 
@@ -785,7 +785,7 @@
             // 
             this.editRemoteStripMenuItem.Name = "editRemoteStripMenuItem";
             this.editRemoteStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
-            this.editRemoteStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.editRemoteStripMenuItem.Size = new System.Drawing.Size(204, 24);
             this.editRemoteStripMenuItem.Text = "Редактировать";
             this.editRemoteStripMenuItem.Click += new System.EventHandler(this.editRemoteStripMenuItem_Click);
             // 
@@ -793,7 +793,7 @@
             // 
             this.copyRemoteStripMenuItem.Name = "copyRemoteStripMenuItem";
             this.copyRemoteStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.copyRemoteStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.copyRemoteStripMenuItem.Size = new System.Drawing.Size(204, 24);
             this.copyRemoteStripMenuItem.Text = "Копировать";
             this.copyRemoteStripMenuItem.Click += new System.EventHandler(this.copyRemoteStripMenuItem_Click);
             // 
@@ -801,7 +801,7 @@
             // 
             this.transferRemoteStripMenuItem.Name = "transferRemoteStripMenuItem";
             this.transferRemoteStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F6;
-            this.transferRemoteStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.transferRemoteStripMenuItem.Size = new System.Drawing.Size(204, 24);
             this.transferRemoteStripMenuItem.Text = "Перенести";
             this.transferRemoteStripMenuItem.Click += new System.EventHandler(this.transferRemoteStripMenuItem_Click);
             // 
@@ -809,7 +809,7 @@
             // 
             this.createRemoteStripMenuItem.Name = "createRemoteStripMenuItem";
             this.createRemoteStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F7;
-            this.createRemoteStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.createRemoteStripMenuItem.Size = new System.Drawing.Size(204, 24);
             this.createRemoteStripMenuItem.Text = "Создать папку";
             this.createRemoteStripMenuItem.Click += new System.EventHandler(this.createRemoteStripMenuItem_Click);
             // 
@@ -817,7 +817,7 @@
             // 
             this.deleteRemoteStripMenuItem.Name = "deleteRemoteStripMenuItem";
             this.deleteRemoteStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
-            this.deleteRemoteStripMenuItem.Size = new System.Drawing.Size(210, 24);
+            this.deleteRemoteStripMenuItem.Size = new System.Drawing.Size(204, 24);
             this.deleteRemoteStripMenuItem.Text = "Удалить";
             this.deleteRemoteStripMenuItem.Click += new System.EventHandler(this.deleteRemoteStripMenuItem_Click);
             // 

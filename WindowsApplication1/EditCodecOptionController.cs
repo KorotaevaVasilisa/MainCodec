@@ -118,7 +118,7 @@ namespace TCPclient
                     {
                         if (!MyParentForm.findcdcs)
                         {
-                            //MyParentForm.findcdcs = true;
+                            //editCodecForm.findcdcs = true;
                             MyParentForm.connect = true;
                             MyParentForm.SetLabelStatus("connected");
                         }

@@ -39,9 +39,9 @@
             // 
             // btCPCancel
             // 
-            this.btCPCancel.Location = new System.Drawing.Point(405, 145);
+            this.btCPCancel.Location = new System.Drawing.Point(378, 145);
             this.btCPCancel.Name = "btCPCancel";
-            this.btCPCancel.Size = new System.Drawing.Size(75, 27);
+            this.btCPCancel.Size = new System.Drawing.Size(100, 25);
             this.btCPCancel.TabIndex = 0;
             this.btCPCancel.Text = "Отмена";
             this.btCPCancel.UseVisualStyleBackColor = true;
@@ -51,7 +51,7 @@
             // 
             this.btCPApply.Location = new System.Drawing.Point(484, 145);
             this.btCPApply.Name = "btCPApply";
-            this.btCPApply.Size = new System.Drawing.Size(121, 27);
+            this.btCPApply.Size = new System.Drawing.Size(121, 25);
             this.btCPApply.TabIndex = 1;
             this.btCPApply.Text = "Копировать";
             this.btCPApply.UseVisualStyleBackColor = true;
@@ -100,7 +100,7 @@
             this.progressBar1.TabIndex = 6;
             this.progressBar1.Visible = false;
             // 
-            // CopyAndTransferWindow
+            // LoadingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -112,7 +112,7 @@
             this.Controls.Add(this.tbFrom);
             this.Controls.Add(this.btCPApply);
             this.Controls.Add(this.btCPCancel);
-            this.Name = "CopyAndTransferWindow";
+            this.Name = "LoadingForm";
             this.Text = "Копирование";
             this.ResumeLayout(false);
             this.PerformLayout();
