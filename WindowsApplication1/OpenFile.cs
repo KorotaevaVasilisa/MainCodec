@@ -9,6 +9,7 @@ namespace TCPclient
     {
         EditCodecForm MyParentForm = null;
         string sFile = "";
+        bool readOnly;
         public OpenFile(EditCodecForm form, string pathFile, bool readOnly)
         {
             InitializeComponent();
@@ -16,6 +17,9 @@ namespace TCPclient
             this.DialogResult = DialogResult.Cancel;
             ReadFile(pathFile, readOnly);
             sFile = pathFile;
+            this.readOnly = readOnly;
+            if (readOnly)
+                saveButton.Text = "Закрыть";
         }
 
         private void ReadFile(string pathFile, bool readOnly)
@@ -37,8 +41,18 @@ namespace TCPclient
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            System.IO.File.WriteAllText(sFile, richTextBox1.Text);
-            MessageBox.Show("Файл сохранен");
+            if (!readOnly)
+            {
+                try
+                {
+                    System.IO.File.WriteAllText(sFile, richTextBox1.Text);
+                    MessageBox.Show("Файл сохранен");
+                }catch( Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            Close();
         }
     }
 }

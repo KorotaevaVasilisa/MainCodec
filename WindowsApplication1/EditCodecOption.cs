@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using System.Threading;
+using static System.Windows.Forms.AxHost;
 
 //using File = System.IO.File;
 
@@ -1120,12 +1121,12 @@ namespace TCPclient
             return res == DialogResult.OK;
         }
 
-        CopyAndTransferWindow cp_window = null;
+        LoadingForm loading_form = null;
 
-        public bool CopyAndTransfer_Dialog(bool copy, string output, string input, string fileName)
+        public bool LoadingForm_Dialog(ListRemoteState state, string fileName, string output, string input ="")
         {
-            cp_window = new CopyAndTransferWindow(this, copy, output, input, fileName);
-            DialogResult res = cp_window.ShowDialog();
+            loading_form = new LoadingForm(this, state, fileName, output, input);
+            DialogResult res = loading_form.ShowDialog();
             return res == DialogResult.OK;
         }
 
@@ -1566,11 +1567,10 @@ namespace TCPclient
                 {
                     string path = @"" + textLocalPath.Text + "\\" + file.Name;
 
-                    // if ((file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    if (items[0].SubItems[3].Text.Contains("r"))
+                    //if (items[0].SubItems[3].Text.Contains("r"))
                         OpenFile_Dialog(path, true);
-                    else
-                        OpenFile_Dialog(path, false);
+                    //else
+                    //    OpenFile_Dialog(path, false);
                 }
                 else
                 {
@@ -3056,21 +3056,40 @@ namespace TCPclient
 
         private void editStripMenuItem_Click(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
             if (items.Count == 0)
                 return;
+            string sFile = items[0].Text;
+
+            if (items[0].Text.Equals(".."))
+            {
+                return;
+            }
+            else
+            {
+                System.IO.FileInfo file = new System.IO.FileInfo(sFile);
+                if (!items[0].SubItems[3].Text.Contains("/"))
+                {
+                    string path = @"" + textLocalPath.Text + "\\" + file.Name;
+
+                    if (items[0].SubItems[3].Text.Contains("r"))
+                        OpenFile_Dialog(path, true);
+                    else
+                        OpenFile_Dialog(path, false);
+                }
+            }
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
             if (items.Count == 0)
                 return;
         }
 
         private void transferStripMenuItem_Click(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
             if (items.Count == 0)
                 return;
         }
@@ -3156,6 +3175,15 @@ namespace TCPclient
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
+            sFile = items[0].Text;
+            sizeFile = int.Parse(items[0].SubItems[1].Text);
+            //TODO
+            if (items[0].SubItems[3].Text == "/")
+                return;
+
+            pathRemote = textRemotePath.Text + sFile;
+            listRemoteState = ListRemoteState.Show;
+            LoadingForm_Dialog(listRemoteState,sFile, pathRemote);
         }
 
         private void editRemoteStripMenuItem_Click(object sender, EventArgs e)
@@ -3163,27 +3191,37 @@ namespace TCPclient
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
+            sFile = items[0].Text;
+            sizeFile = int.Parse(items[0].SubItems[1].Text);
+            //TODO
+            if (items[0].SubItems[3].Text == "/")
+                return;
+
+            pathRemote = textRemotePath.Text + sFile;
+            listRemoteState = ListRemoteState.Edit;
+            LoadingForm_Dialog(listRemoteState, sFile, pathRemote);
         }
 
         private void copyRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-            CopyRemoteFile(wasCopy);
+            listRemoteState = ListRemoteState.Copy;
+            CopyRemoteFile(listRemoteState);
             LocalRefresh();
         }
 
         public string rmsg_sfl = "";
         private string pathRemote, pathLocal, sFile;
-        private bool wasCopy = true;
         int sizeFile;
+        ListRemoteState listRemoteState;
 
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-            wasCopy = false;
-            CopyRemoteFile(wasCopy);
+            listRemoteState = ListRemoteState.Transfer;
+            CopyRemoteFile(listRemoteState);
             LocalRefresh();
         }
 
-        private void CopyRemoteFile(bool wasCopy)
+        private void CopyRemoteFile(ListRemoteState state)
         {
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
@@ -3196,7 +3234,7 @@ namespace TCPclient
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            CopyAndTransfer_Dialog(wasCopy, pathRemote, pathLocal, sFile);
+            LoadingForm_Dialog(state, pathRemote, pathLocal, sFile);
         }
 
         private void createRemoteStripMenuItem_Click(object sender, EventArgs e)
@@ -3217,48 +3255,76 @@ namespace TCPclient
                 SendMsg($"system mkdir {textRemotePath.Text}{nameFolder}\r");
             }
         }
+
         private void deleteRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
             sFile = items[0].Text;
+            pathRemote = textRemotePath.Text + sFile;
             DialogResult result;
             string atrFile = items[0].SubItems[3].Text;
             if (atrFile == "/")
             {
-                result = MessageBox.Show($"Вы точно хотите удалить папку {sFile}?",
+                result = MessageBox.Show($"Вы точно хотите удалить папку {pathRemote}?",
     "Удаление папки", MessageBoxButtons.YesNo);
             }
             else
             {
-                result = MessageBox.Show($"Вы точно хотите удалить файл {sFile}?",
+                result = MessageBox.Show($"Вы точно хотите удалить файл {pathRemote}?",
     "Удаление файла", MessageBoxButtons.YesNo);
             }
             if (result == DialogResult.Yes)
             {
-                SendMsg($"system rm -r {sFile}\r");
+                SendMsg($"system rm -r {pathRemote}\r");
             }
             
         }
 
         public void onCopyRemoteFile()
         {
-            File.WriteAllText(pathLocal, rmsg_sfl);
-            if (!wasCopy)
+            switch (listRemoteState)
             {
-                SendMsg($"system rm -r {sFile}\r");
+                case ListRemoteState.Show:
+                    {
+                        MessageBox.Show(rmsg_sfl);
+                        break;
+                    }
+                case ListRemoteState.Edit:
+                    {
+                        MessageBox.Show(rmsg_sfl);
+                        break;
+                    }
+                case ListRemoteState.Copy:
+                    {
+                        File.WriteAllText(pathLocal, rmsg_sfl);
+                        break;
+                    }
+                case ListRemoteState.Transfer:
+                    {
+                        File.WriteAllText(pathLocal, rmsg_sfl);
+                        SendMsg($"system rm -r {sFile}\r");
+                        break;
+                    }
             }
-            wasCopy = true;
         }
 
         public void onUpdateProgressBar(int size)
         {
-            cp_window.DownloadProgress(size,sizeFile);
+            loading_form.DownloadProgress(size,sizeFile);
     
         }
-    }
 
+
+    }
+    public enum ListRemoteState
+    {
+        Copy,
+        Transfer,
+        Show,
+        Edit
+    }
     /*======================*/
     static class Program
     {

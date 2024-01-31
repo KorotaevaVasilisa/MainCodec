@@ -1,6 +1,6 @@
 ﻿namespace TCPclient
 {
-    partial class CopyAndTransferWindow
+    partial class LoadingForm
     {
         /// <summary>
         /// Required designer variable.
