@@ -16,8 +16,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.Threading;
-using static System.Windows.Forms.AxHost;
 
 //using File = System.IO.File;
 
@@ -856,6 +854,7 @@ namespace TCPclient
             catch (Exception e)
             {
                 logger.Error($"SEND MSG {e.StackTrace} {e.Message}");
+                MessageBox.Show(e.Message);
             }
         }
 
@@ -1130,9 +1129,9 @@ namespace TCPclient
 
         LoadingForm loading_form = null;
 
-        public bool LoadingForm_Dialog(ListRemoteState state, string fileName, string output, string input ="")
+        public bool LoadingForm_Dialog(ListRemoteState state, string output, string input ="")
         {
-            loading_form = new LoadingForm(this, state, fileName, output, input);
+            loading_form = new LoadingForm(this, state,  output, input);
             DialogResult res = loading_form.ShowDialog();
             return res == DialogResult.OK;
         }
@@ -1582,7 +1581,7 @@ namespace TCPclient
                 else
                 {
                     if (textLocalPath.Text.EndsWith("\\"))
-                        textLocalPath.Text = textLocalPath.Text + file.Name.ToString();
+                        textLocalPath.Text += file.Name.ToString();
                     else textLocalPath.Text = textLocalPath.Text + "\\" + file.Name.ToString();
                     LocalRefresh();
                 }
@@ -3220,7 +3219,7 @@ namespace TCPclient
         public string rmsg_sfl = "";
         private string pathRemote, pathLocal, sFile;
         int sizeFile;
-        ListRemoteState listRemoteState;
+        public ListRemoteState listRemoteState;
 
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -3243,7 +3242,7 @@ namespace TCPclient
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            LoadingForm_Dialog(state,sFile, pathRemote, pathLocal);
+            LoadingForm_Dialog(state,pathRemote, pathLocal);
         }
 
         private void createRemoteStripMenuItem_Click(object sender, EventArgs e)
@@ -3316,6 +3315,8 @@ namespace TCPclient
                         SendMsg($"system rm -r {sFile}\r");
                         break;
                     }
+                default: break;
+                
             }
             listRemoteState = ListRemoteState.Inaction;
 

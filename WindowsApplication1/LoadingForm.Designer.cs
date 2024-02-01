@@ -112,11 +112,11 @@
             this.Controls.Add(this.tbFrom);
             this.Controls.Add(this.btCPApply);
             this.Controls.Add(this.btCPCancel);
+            this.MaximizeBox = false;
             this.Name = "LoadingForm";
             this.Text = "Копирование";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

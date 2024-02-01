@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Text;
 using System.Windows.Forms;
 
 namespace TCPclient
 {
     public partial class LoadingForm : Form
     {
-        EditCodecForm editCodecForm = null;
-        string path;
-        public LoadingForm(EditCodecForm editCodecForm, ListRemoteState state, string fileName, string output, string input ="")
+        private EditCodecForm editCodecForm = null;
+        private string path;
+        public LoadingForm(EditCodecForm editCodecForm, ListRemoteState state, string output, string input ="")
         {
             InitializeComponent();
             this.editCodecForm = editCodecForm;
@@ -60,11 +54,17 @@ namespace TCPclient
                         btCPApply.Text = "Перенестить";
                         break;
                     }
+                default:
+                {
+                    Close();
+                    break;
+                }
             }
         }
 
         private void btCPCancel_Click(object sender, EventArgs e)
         {
+            editCodecForm.listRemoteState = ListRemoteState.Inaction;
             Close();
         }
 

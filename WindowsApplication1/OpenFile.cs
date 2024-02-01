@@ -19,7 +19,7 @@ namespace TCPclient
             sFile = pathFile;
             this.readOnly = readOnly;
             if (readOnly)
-                saveButton.Text = "Закрыть";
+                btnSave.Enabled = false;
         }
 
         public OpenFile(EditCodecForm form, ListRemoteState state, string fileName, string information)
@@ -31,7 +31,7 @@ namespace TCPclient
             if (state == ListRemoteState.Show)
             {
                 richTextBox1.ReadOnly = true;
-                saveButton.Text = "Закрыть";            
+                btnSave.Enabled = false;            
             }
         }
 
@@ -64,6 +64,11 @@ namespace TCPclient
                     MessageBox.Show(ex.Message);
                 }
             }
+            Close();
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
             Close();
         }
     }

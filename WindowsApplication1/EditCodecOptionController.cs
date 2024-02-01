@@ -244,6 +244,9 @@ namespace TCPclient
                     {
 
                         MyParentForm.CdcOptionSflRRqst();
+                        if(MyParentForm.listRemoteState == ListRemoteState.Inaction)
+                            continue;
+                        
                         byte[] textAsBytes = System.Convert.FromBase64String(str.Substring(5));
                         string part  = System.Text.Encoding.Default.GetString(textAsBytes);
                         MyParentForm.rmsg_sfl += part;
