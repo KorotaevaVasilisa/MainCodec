@@ -224,7 +224,6 @@ namespace TCPclient
                         {
                             string[] text = MyParentForm.rmsg_ls.Split('\r', '\n');
                             List<string> list = new List<string>(text);
-                            logger.Info(MyParentForm.rmsg_ls);
                             remoteChanged.onChanged(list);
                             break;
                         }
@@ -244,7 +243,7 @@ namespace TCPclient
                     {
 
                         MyParentForm.CdcOptionSflRRqst();
-                        if(MyParentForm.listRemoteState == ListRemoteState.Inaction)
+                        if(MyParentForm.ActionState == ActionState.Inaction)
                             continue;
                         
                         byte[] textAsBytes = System.Convert.FromBase64String(str.Substring(5));
@@ -300,10 +299,10 @@ namespace TCPclient
                             Parse();
                         }
                     }
-                    catch (Exception e)
-                    {
-                        logger.Error(String.Format("ERROR THREAD " + e.Message.ToString(), this, DateTime.Now));
-                    }
+                        catch (Exception e)
+                        {
+                            logger.Error(String.Format("ERROR THREAD " + e.Message.ToString(), this, DateTime.Now));
+                        }
                 }
             }
         }

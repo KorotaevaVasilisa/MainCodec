@@ -22,17 +22,23 @@ namespace TCPclient
                 btnSave.Enabled = false;
         }
 
-        public OpenFile(EditCodecForm form, ListRemoteState state, string fileName, string information)
+        public OpenFile(EditCodecForm form, ActionState state, string fileName, string information)
         {
             InitializeComponent();
             this.editCodecForm = form;
             Text = fileName;
             richTextBox1.Text = information;
-            if (state == ListRemoteState.Show)
+            if (state == ActionState.Show)
             {
                 richTextBox1.ReadOnly = true;
                 btnSave.Enabled = false;            
             }
+        }
+
+        public sealed override string Text
+        {
+            get { return base.Text; }
+            set { base.Text = value; }
         }
 
         private void ReadFile(string pathFile, bool readOnly)

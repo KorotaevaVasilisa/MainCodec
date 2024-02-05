@@ -87,10 +87,10 @@
             this.updateButton = new System.Windows.Forms.Button();
             this.textRemotePath = new System.Windows.Forms.TextBox();
             this.listViewRemote = new System.Windows.Forms.ListView();
-            this.remoteName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.remoteSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.remoteDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.remoteAtr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.remoteName = new System.Windows.Forms.ColumnHeader();
+            this.remoteSize = new System.Windows.Forms.ColumnHeader();
+            this.remoteDate = new System.Windows.Forms.ColumnHeader();
+            this.remoteAtr = new System.Windows.Forms.ColumnHeader();
             this.remoteMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.showRemoteStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editRemoteStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,10 +99,10 @@
             this.createRemoteStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteRemoteStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listViewLocal = new System.Windows.Forms.ListView();
-            this.ColumnName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ColumnSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ColumnDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ColumnAtr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ColumnName = new System.Windows.Forms.ColumnHeader();
+            this.ColumnSize = new System.Windows.Forms.ColumnHeader();
+            this.ColumnDate = new System.Windows.Forms.ColumnHeader();
+            this.ColumnAtr = new System.Windows.Forms.ColumnHeader();
             this.textLocalPath = new System.Windows.Forms.TextBox();
             this.comboBoxDriveInfo = new System.Windows.Forms.ComboBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -157,13 +157,7 @@
             // localMenuStrip
             // 
             this.localMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.localMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showStripMenuItem,
-            this.editStripMenuItem,
-            this.copyToolStripMenuItem,
-            this.transferStripMenuItem,
-            this.createStripMenuItem,
-            this.deleteStripMenuItem});
+            this.localMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.showStripMenuItem, this.editStripMenuItem, this.copyToolStripMenuItem, this.transferStripMenuItem, this.createStripMenuItem, this.deleteStripMenuItem });
             this.localMenuStrip.Name = "contextMenuStrip1";
             this.localMenuStrip.Size = new System.Drawing.Size(205, 148);
             // 
@@ -221,7 +215,7 @@
             this.tSStatLbBaud.BorderStyle = System.Windows.Forms.Border3DStyle.Sunken;
             this.tSStatLbBaud.Name = "tSStatLbBaud";
             this.tSStatLbBaud.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.tSStatLbBaud.Size = new System.Drawing.Size(102, 24);
+            this.tSStatLbBaud.Size = new System.Drawing.Size(102, 25);
             this.tSStatLbBaud.Text = "tSStatLbBaud";
             // 
             // tSStatLbLen
@@ -230,7 +224,7 @@
             this.tSStatLbLen.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
             this.tSStatLbLen.Name = "tSStatLbLen";
             this.tSStatLbLen.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-            this.tSStatLbLen.Size = new System.Drawing.Size(91, 24);
+            this.tSStatLbLen.Size = new System.Drawing.Size(91, 25);
             this.tSStatLbLen.Text = "tSStatLbLen";
             // 
             // tSStatLbPrty
@@ -238,7 +232,7 @@
             this.tSStatLbPrty.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.tSStatLbPrty.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
             this.tSStatLbPrty.Name = "tSStatLbPrty";
-            this.tSStatLbPrty.Size = new System.Drawing.Size(93, 24);
+            this.tSStatLbPrty.Size = new System.Drawing.Size(93, 25);
             this.tSStatLbPrty.Text = "tSStatLbPrty";
             // 
             // tSStatLbStop
@@ -246,14 +240,14 @@
             this.tSStatLbStop.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.tSStatLbStop.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
             this.tSStatLbStop.Name = "tSStatLbStop";
-            this.tSStatLbStop.Size = new System.Drawing.Size(99, 24);
+            this.tSStatLbStop.Size = new System.Drawing.Size(99, 25);
             this.tSStatLbStop.Text = "tSStatLbStop";
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(99, 24);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(99, 25);
             this.toolStripStatusLabel1.Text = "Port Status ->";
             // 
             // tSStatLbPinStat
@@ -261,19 +255,13 @@
             this.tSStatLbPinStat.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.tSStatLbPinStat.BorderStyle = System.Windows.Forms.Border3DStyle.SunkenOuter;
             this.tSStatLbPinStat.Name = "tSStatLbPinStat";
-            this.tSStatLbPinStat.Size = new System.Drawing.Size(324, 24);
+            this.tSStatLbPinStat.Size = new System.Drawing.Size(324, 25);
             this.tSStatLbPinStat.Text = "RTShandshake permit CD stat DSR stat CTS stat";
             // 
             // statStrip
             // 
             this.statStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tSStatLbBaud,
-            this.tSStatLbLen,
-            this.tSStatLbPrty,
-            this.tSStatLbStop,
-            this.toolStripStatusLabel1,
-            this.tSStatLbPinStat});
+            this.statStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.tSStatLbBaud, this.tSStatLbLen, this.tSStatLbPrty, this.tSStatLbStop, this.toolStripStatusLabel1, this.tSStatLbPinStat });
             this.statStrip.Location = new System.Drawing.Point(0, 925);
             this.statStrip.Name = "statStrip";
             this.statStrip.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
@@ -300,16 +288,7 @@
             this.lbBaud.FormattingEnabled = true;
             this.lbBaud.IntegralHeight = false;
             this.lbBaud.ItemHeight = 20;
-            this.lbBaud.Items.AddRange(new object[] {
-            "115200",
-            "57600",
-            "38400",
-            "19200",
-            "9600",
-            "4800",
-            "2400",
-            "1200",
-            "600"});
+            this.lbBaud.Items.AddRange(new object[] { "115200", "57600", "38400", "19200", "9600", "4800", "2400", "1200", "600" });
             this.lbBaud.Location = new System.Drawing.Point(239, 7);
             this.lbBaud.Margin = new System.Windows.Forms.Padding(4);
             this.lbBaud.Name = "lbBaud";
@@ -345,25 +324,13 @@
             this.UpDnNport.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.UpDnNport.Location = new System.Drawing.Point(73, 9);
             this.UpDnNport.Margin = new System.Windows.Forms.Padding(4);
-            this.UpDnNport.Maximum = new decimal(new int[] {
-            40,
-            0,
-            0,
-            0});
-            this.UpDnNport.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.UpDnNport.Maximum = new decimal(new int[] { 40, 0, 0, 0 });
+            this.UpDnNport.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             this.UpDnNport.Name = "UpDnNport";
             this.UpDnNport.Size = new System.Drawing.Size(53, 23);
             this.UpDnNport.TabIndex = 62;
             this.UpDnNport.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.UpDnNport.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.UpDnNport.Value = new decimal(new int[] { 1, 0, 0, 0 });
             this.UpDnNport.ValueChanged += new System.EventHandler(this.Nport_chngd);
             // 
             // label2
@@ -396,63 +363,56 @@
             // ToolStripMenuItem1
             // 
             this.ToolStripMenuItem1.Name = "ToolStripMenuItem1";
-            this.ToolStripMenuItem1.Size = new System.Drawing.Size(131, 24);
+            this.ToolStripMenuItem1.Size = new System.Drawing.Size(129, 24);
             this.ToolStripMenuItem1.Text = "Настройка сети";
             this.ToolStripMenuItem1.Click += new System.EventHandler(this.MenuNet_Click);
             // 
             // ToolStripMenuItem2
             // 
             this.ToolStripMenuItem2.Name = "ToolStripMenuItem2";
-            this.ToolStripMenuItem2.Size = new System.Drawing.Size(156, 24);
+            this.ToolStripMenuItem2.Size = new System.Drawing.Size(154, 24);
             this.ToolStripMenuItem2.Text = "Настройка FM_прм";
             this.ToolStripMenuItem2.Click += new System.EventHandler(this.MenuFM_Click);
             // 
             // ToolStripMenuItem3
             // 
             this.ToolStripMenuItem3.Name = "ToolStripMenuItem3";
-            this.ToolStripMenuItem3.Size = new System.Drawing.Size(146, 24);
+            this.ToolStripMenuItem3.Size = new System.Drawing.Size(144, 24);
             this.ToolStripMenuItem3.Text = "Потоковое радио";
             this.ToolStripMenuItem3.Click += new System.EventHandler(this.MenuStreamRadio_Click);
             // 
             // ToolStripMenuItem4
             // 
             this.ToolStripMenuItem4.Name = "ToolStripMenuItem4";
-            this.ToolStripMenuItem4.Size = new System.Drawing.Size(147, 24);
+            this.ToolStripMenuItem4.Size = new System.Drawing.Size(145, 24);
             this.ToolStripMenuItem4.Text = "Выходы декодера";
             this.ToolStripMenuItem4.Click += new System.EventHandler(this.MenuProgram_Click);
             // 
             // ToolStripMenuItem5
             // 
             this.ToolStripMenuItem5.Name = "ToolStripMenuItem5";
-            this.ToolStripMenuItem5.Size = new System.Drawing.Size(82, 24);
+            this.ToolStripMenuItem5.Size = new System.Drawing.Size(80, 24);
             this.ToolStripMenuItem5.Text = "Консоль";
             this.ToolStripMenuItem5.Click += new System.EventHandler(this.MenuConsole_Click);
             // 
             // toolStripMenuItem6
             // 
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(98, 24);
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(96, 24);
             this.toolStripMenuItem6.Text = "Статистика";
             this.toolStripMenuItem6.Click += new System.EventHandler(this.MenuStat_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(156, 24);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(154, 24);
             this.toolStripMenuItem7.Text = "Пересылка файлов";
             this.toolStripMenuItem7.Click += new System.EventHandler(this.MenuSentfile_Click);
             // 
             // menuStrip1
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ToolStripMenuItem1,
-            this.ToolStripMenuItem2,
-            this.ToolStripMenuItem3,
-            this.ToolStripMenuItem4,
-            this.ToolStripMenuItem5,
-            this.toolStripMenuItem6,
-            this.toolStripMenuItem7});
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.ToolStripMenuItem1, this.ToolStripMenuItem2, this.ToolStripMenuItem3, this.ToolStripMenuItem4, this.ToolStripMenuItem5, this.toolStripMenuItem6, this.toolStripMenuItem7 });
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1132, 28);
@@ -724,11 +684,7 @@
             // 
             // listViewRemote
             // 
-            this.listViewRemote.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.remoteName,
-            this.remoteSize,
-            this.remoteDate,
-            this.remoteAtr});
+            this.listViewRemote.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.remoteName, this.remoteSize, this.remoteDate, this.remoteAtr });
             this.listViewRemote.ContextMenuStrip = this.remoteMenuStrip;
             this.listViewRemote.FullRowSelect = true;
             this.listViewRemote.HideSelection = false;
@@ -762,13 +718,7 @@
             // remoteMenuStrip
             // 
             this.remoteMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.remoteMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showRemoteStripMenuItem,
-            this.editRemoteStripMenuItem,
-            this.copyRemoteStripMenuItem,
-            this.transferRemoteStripMenuItem,
-            this.createRemoteStripMenuItem,
-            this.deleteRemoteStripMenuItem});
+            this.remoteMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.showRemoteStripMenuItem, this.editRemoteStripMenuItem, this.copyRemoteStripMenuItem, this.transferRemoteStripMenuItem, this.createRemoteStripMenuItem, this.deleteRemoteStripMenuItem });
             this.remoteMenuStrip.Name = "contextMenuStrip1";
             this.remoteMenuStrip.Size = new System.Drawing.Size(205, 148);
             this.remoteMenuStrip.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.remoteMenuStrip_PreviewKeyDown);
@@ -823,11 +773,7 @@
             // 
             // listViewLocal
             // 
-            this.listViewLocal.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.ColumnName,
-            this.ColumnSize,
-            this.ColumnDate,
-            this.ColumnAtr});
+            this.listViewLocal.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.ColumnName, this.ColumnSize, this.ColumnDate, this.ColumnAtr });
             this.listViewLocal.ContextMenuStrip = this.localMenuStrip;
             this.listViewLocal.FullRowSelect = true;
             this.listViewLocal.HideSelection = false;
@@ -1040,7 +986,6 @@
             this.tabControl.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         private System.Windows.Forms.ToolStripMenuItem transferStripMenuItem;
