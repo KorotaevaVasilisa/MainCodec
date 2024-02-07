@@ -23,7 +23,7 @@ namespace TCPclient
         {
             switch (state)
             {
-                case ActionState.Show:
+                case ActionState.RemoteShow:
                 {
                     Text = "Загрузка";
                     btCPCancel.Text = "Прервать";
@@ -34,7 +34,7 @@ namespace TCPclient
                     editCodecForm.CdcOptionSflOpenrRqst(path);
                     break;
                 }
-                case ActionState.Edit:
+                case ActionState.RemoteEdit:
                 {
                     Text = "Загрузка";
                     btCPCancel.Text = "Прервать";

@@ -79,6 +79,7 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
+            this.MaximizeBox = false;
             this.Name = "CreateFolderForm";
             this.Text = "Создание каталога";
             this.ResumeLayout(false);

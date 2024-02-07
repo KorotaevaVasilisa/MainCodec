@@ -8,37 +8,38 @@ namespace TCPclient
     public partial class OpenFile : Form
     {
         EditCodecForm editCodecForm = null;
-        string sFile = "";
-        bool readOnly;
-        public OpenFile(EditCodecForm form, string pathFile, bool readOnly)
-        {
-            InitializeComponent();
-            this.editCodecForm = form;
-            this.DialogResult = DialogResult.Cancel;
-            ReadFile(pathFile, readOnly);
-            sFile = pathFile;
-            this.readOnly = readOnly;
-            if (readOnly)
-                btnSave.Enabled = false;
-        }
+        string path = "";
 
-        public OpenFile(EditCodecForm form, ActionState state, string fileName, string information)
+        ActionState state;
+
+        public OpenFile(EditCodecForm form, ActionState state, string fileName, string information, string path)
         {
             InitializeComponent();
             this.editCodecForm = form;
+            this.state = state;
+            this.path = path;
             Text = fileName;
             richTextBox1.Text = information;
-            if (state == ActionState.Show)
-            {
-                richTextBox1.ReadOnly = true;
-                btnSave.Enabled = false;            
-            }
+            UpdateUI(state);
         }
 
-        public sealed override string Text
+        private void UpdateUI(ActionState state)
         {
-            get { return base.Text; }
-            set { base.Text = value; }
+            switch (state)
+            {
+                case ActionState.RemoteShow:
+                    {
+                        richTextBox1.ReadOnly = true;
+                        btnSave.Enabled = false;
+                        break;
+                    }
+                    case ActionState.LocalShow:
+                    {
+                        richTextBox1.ReadOnly = true;
+                        btnSave.Enabled = false;
+                        break;
+                    }
+            }
         }
 
         private void ReadFile(string pathFile, bool readOnly)
@@ -59,16 +60,27 @@ namespace TCPclient
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            if (!readOnly)
+               
+            switch (state)
             {
-                try
-                {
-                    System.IO.File.WriteAllText(sFile, richTextBox1.Text);
-                    MessageBox.Show("Файл сохранен");
-                }catch( Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                case ActionState.LocalEdit:
+                    {
+                        try
+                        {
+                            System.IO.File.WriteAllText(path, richTextBox1.Text);
+                            MessageBox.Show("Файл сохранен");
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                case ActionState.RemoteEdit:
+                    {
+                        editCodecForm.EditSaveFile(richTextBox1.Text, path);
+                        break;
+                    }
             }
             Close();
         }

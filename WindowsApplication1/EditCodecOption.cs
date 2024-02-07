@@ -297,7 +297,7 @@ namespace TCPclient
 #endif
             ReadStationsFile();
             //if (!okcfg)
-            //    MessageBox.Show("Некорректное значение IP кодека", "Ошибка");
+            //    MessageBox.RemoteShow("Некорректное значение IP кодека", "Ошибка");
             timerTstConnect.Start();
         }
 
@@ -359,7 +359,7 @@ namespace TCPclient
                             //{
                             //    byte[] data = new byte[BitConverter.ToInt32(datalength, 0)];
                             //    stream.Read(data, 0, data.Length);
-                            //    MessageBox.Show(System.Environment.NewLine + "Client : " + Encoding.Default.GetString(data));
+                            //    MessageBox.RemoteShow(System.Environment.NewLine + "Client : " + Encoding.Default.GetString(data));
                             //}
                         }
                     }
@@ -372,15 +372,15 @@ namespace TCPclient
   //     s += "  tcp_client=null";
   // else if (!tcp_client.Connected)
   //         s += "  tcp_client.Connected=false";
-  // MessageBox.Show(s);
+  // MessageBox.RemoteShow(s);
                               LossConnect();
                           } */
                         //Class1.server.Start(); 
-                        //MessageBox.Show("Waiting For Connection");
+                        //MessageBox.RemoteShow("Waiting For Connection");
                         //new Thread(() =>
                         //{
                         //    Class1.client = Class1.server.AcceptTcpClient();
-                        //    MessageBox.Show("Connected To Client");
+                        //    MessageBox.RemoteShow("Connected To Client");
                         //    if (Class1.client.Connected)
                         //    {
                         //        Class1.ServerReceive();
@@ -1089,16 +1089,9 @@ namespace TCPclient
 
         OpenFile open_edit = null;
 
-        public bool OpenFile_Dialog(string path, bool readOnly)
+        public bool OpenFile_Dialog(ActionState state, string fileName, string information, string path)
         {
-            open_edit = new OpenFile(this, path, readOnly);
-            DialogResult res = open_edit.ShowDialog();
-            return res == DialogResult.OK;
-        }
-
-        public bool OpenFile_Dialog(ActionState state, string fileName, string information)
-        {
-            open_edit = new OpenFile(this, state, fileName, information);
+            open_edit = new OpenFile(this, state, fileName, information, path);
             DialogResult res = open_edit.ShowDialog();
             return res == DialogResult.OK;
         }
@@ -1571,12 +1564,17 @@ namespace TCPclient
                 System.IO.FileInfo file = new System.IO.FileInfo(sFile);
                 if (!items[0].SubItems[3].Text.Contains("/"))
                 {
-                    string path = @"" + textLocalPath.Text + "\\" + file.Name;
-
-                    //if (items[0].SubItems[3].Text.Contains("r"))
-                    OpenFile_Dialog(path, true);
-                    //else
-                    //    OpenFile_Dialog(path, false);
+                    pathLocal = @"" + textLocalPath.Text + "\\" + file.Name;
+                    try
+                    {
+                        string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
+                        ActionState = ActionState.LocalShow;
+                        OpenFile_Dialog(ActionState, file.Name, fileText, pathLocal);
+                    } catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        logger.Error(String.Format($"{ex.Message} {ex.StackTrace}", DateTime.Now));
+                    }
                 }
                 else
                 {
@@ -1675,7 +1673,7 @@ namespace TCPclient
                     //TODO
 
                     pathRemote = textRemotePath.Text + sFile;
-                    ActionState = ActionState.Show;
+                    ActionState = ActionState.RemoteShow;
                     LoadingForm_Dialog(ActionState, path, pathRemote);
                 }
                 else
@@ -3076,14 +3074,34 @@ namespace TCPclient
                 System.IO.FileInfo file = new System.IO.FileInfo(sFile);
                 if (!items[0].SubItems[3].Text.Contains("/"))
                 {
-                    string path = @"" + textLocalPath.Text + "\\" + file.Name;
-
+                    pathLocal = @"" + textLocalPath.Text + "\\" + file.Name;
+/*
                     if (items[0].SubItems[3].Text.Contains("r"))
                         OpenFile_Dialog(path, true);
                     else
                         OpenFile_Dialog(path, false);
+*/
+                    try
+                    {
+                        string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
+                        ActionState = ActionState.LocalEdit;
+                        OpenFile_Dialog(ActionState, file.Name, fileText, pathLocal);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        logger.Error(String.Format($"{ex.Message} {ex.StackTrace}", DateTime.Now));
+                    }
                 }
             }
+        }
+        public string textFileEdit = "";
+        public void EditSaveFile(string text, string path)
+        {
+            SendMsg($"sfl openw {path}");
+            textFileEdit = text;
+            //SendMsg($"sfl w {text}");
+            //SendMsg("sfl end");
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3091,16 +3109,9 @@ namespace TCPclient
             ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
             if (items.Count == 0)
                 return;
-            
-            sFile = items[0].Text;
-            sizeFile = int.Parse(items[0].SubItems[1].Text);
-            if (items[0].SubItems[3].Text == "/")
-                return;
 
-            pathRemote = textRemotePath.Text + sFile;
-            pathLocal = $"{textLocalPath.Text}\\{sFile}";
             ActionState = ActionState.LocalCopy;
-            LoadingForm_Dialog(ActionState, pathLocal, pathRemote);
+            OpenLocalFileInLoadingForm(ActionState, items[0]);
         }
 
         private void transferStripMenuItem_Click(object sender, EventArgs e)
@@ -3108,20 +3119,22 @@ namespace TCPclient
             ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
             if (items.Count == 0)
                 return;
-            
-            sFile = items[0].Text;
-            sizeFile = int.Parse(items[0].SubItems[1].Text);
-            if (items[0].SubItems[3].Text == "/")
+
+            ActionState = ActionState.LocalTransfer;
+            OpenLocalFileInLoadingForm(ActionState, items[0]);
+        }
+
+        private void OpenLocalFileInLoadingForm(ActionState state, ListViewItem item)
+        {
+
+            sFile = item.Text;
+            sizeFile = int.Parse(item.SubItems[1].Text);
+            if (item.SubItems[3].Text == "/")
                 return;
 
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            ActionState = ActionState.LocalTransfer;
-            LoadingForm_Dialog(ActionState, pathLocal, pathRemote);
-        }
-
-        private void OpenLocalFileInLoadingForm()
-        {
+            LoadingForm_Dialog(state, pathLocal, pathRemote);
         }
 
         CreateFolderForm folderForm;
@@ -3203,20 +3216,32 @@ namespace TCPclient
 
         private void showRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-            ActionState = ActionState.Show;
-            OpenRemoteFileInLoadingForm(ActionState);
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            ActionState = ActionState.RemoteShow;
+            OpenRemoteFileInLoadingForm(ActionState, items[0]);
         }
 
         private void editRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-            ActionState = ActionState.Edit;
-            OpenRemoteFileInLoadingForm(ActionState);
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            ActionState = ActionState.RemoteEdit;
+            OpenRemoteFileInLoadingForm(ActionState, items[0]);
         }
 
         private void copyRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
+
             ActionState = ActionState.RemoteCopy;
-            OpenRemoteFileInLoadingForm(ActionState);
+            OpenRemoteFileInLoadingForm(ActionState, items[0]);
             LocalRefresh();
         }
 
@@ -3227,20 +3252,20 @@ namespace TCPclient
 
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-            ActionState = ActionState.RemoteTransfer;
-            OpenRemoteFileInLoadingForm(ActionState);
-            LocalRefresh();
-        }
-
-        private void OpenRemoteFileInLoadingForm(ActionState state)
-        {
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
 
-            sFile = items[0].Text;
-            sizeFile = int.Parse(items[0].SubItems[1].Text);
-            if (items[0].SubItems[3].Text == "/")
+            ActionState = ActionState.RemoteTransfer;
+            OpenRemoteFileInLoadingForm(ActionState, items[0]);
+            LocalRefresh();
+        }
+
+        private void OpenRemoteFileInLoadingForm(ActionState state, ListViewItem item)
+        {
+            sFile = item.Text;
+            sizeFile = int.Parse(item.SubItems[1].Text);
+            if (item.SubItems[3].Text == "/")
                 return;
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
@@ -3297,15 +3322,15 @@ namespace TCPclient
         {
             switch (ActionState)
             {
-                case ActionState.Show:
+                case ActionState.RemoteShow:
                 {
-                    OpenFile_Dialog(ActionState, sFile, rmsg_sfl);
+                    OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
                     break;
                 }
-                case ActionState.Edit:
+                case ActionState.RemoteEdit:
                 {
-                    MessageBox.Show(rmsg_sfl);
-                    break;
+                            OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);                      
+                        break;
                 }
                 case ActionState.RemoteCopy:
                 {
@@ -3346,8 +3371,10 @@ namespace TCPclient
         RemoteTransfer,
         LocalCopy,
         LocalTransfer,
-        Show,
-        Edit
+        RemoteShow,
+        RemoteEdit,
+        LocalShow,
+        LocalEdit
     }
 
     /*======================*/

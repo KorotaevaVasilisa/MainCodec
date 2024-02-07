@@ -235,7 +235,10 @@ namespace TCPclient
                     MyParentForm.CdcOptionSflRRqst();
                 }
 
-
+                if(str.StartsWith("sfl openw") && str.Contains("Ok"))
+                {
+                    MyParentForm.SendMsg($"sfl w {MyParentForm.textFileEdit}");
+                }
 
                 if (str.StartsWith("sfl r"))
                 {
@@ -280,6 +283,11 @@ namespace TCPclient
                     MyParentForm.t_cpu = str.Substring(6, 2) + " °C";
                     if (MyParentForm.bitrate_stat != null)
                         MyParentForm.bitrate_stat.ShowTcpu();
+                }
+
+                if (str.StartsWith("sfl w"))
+                {
+                    //MyParentForm.SendMsg("sfl end");
                 }
             }
         }
