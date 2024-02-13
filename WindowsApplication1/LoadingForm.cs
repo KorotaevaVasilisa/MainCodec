@@ -76,8 +76,9 @@ namespace TCPclient
 
         private void btCPCancel_Click(object sender, EventArgs e)
         {
-            editCodecForm.ActionState = ActionState.Inaction;
+            editCodecForm.ActionState = ActionState.Stop;
             progressBar1.Value = 0;
+            editCodecForm.SendMsg("sfl abort");
             Close();
         }
 

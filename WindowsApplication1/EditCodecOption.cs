@@ -1570,7 +1570,8 @@ namespace TCPclient
                         string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
                         ActionState = ActionState.LocalShow;
                         OpenFile_Dialog(ActionState, file.Name, fileText, pathLocal);
-                    } catch (Exception ex)
+                    }
+                    catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message);
                         logger.Error(String.Format($"{ex.Message} {ex.StackTrace}", DateTime.Now));
@@ -3075,12 +3076,12 @@ namespace TCPclient
                 if (!items[0].SubItems[3].Text.Contains("/"))
                 {
                     pathLocal = @"" + textLocalPath.Text + "\\" + file.Name;
-/*
-                    if (items[0].SubItems[3].Text.Contains("r"))
-                        OpenFile_Dialog(path, true);
-                    else
-                        OpenFile_Dialog(path, false);
-*/
+                    /*
+                                        if (items[0].SubItems[3].Text.Contains("r"))
+                                            OpenFile_Dialog(path, true);
+                                        else
+                                            OpenFile_Dialog(path, false);
+                    */
                     try
                     {
                         string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
@@ -3323,26 +3324,31 @@ namespace TCPclient
             switch (ActionState)
             {
                 case ActionState.RemoteShow:
-                {
-                    OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
-                    break;
-                }
-                case ActionState.RemoteEdit:
-                {
-                            OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);                      
+                    {
+                        OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
                         break;
-                }
+                    }
+                case ActionState.RemoteEdit:
+                    {
+                        OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
+                        break;
+                    }
                 case ActionState.RemoteCopy:
-                {
-                    File.WriteAllText(pathLocal, rmsg_sfl);
-                    break;
-                }
+                    {
+                        File.WriteAllText(pathLocal, rmsg_sfl);
+                        break;
+                    }
                 case ActionState.RemoteTransfer:
-                {
-                    File.WriteAllText(pathLocal, rmsg_sfl);
-                    SendMsg($"system rm -r {pathRemote}\r");
-                    break;
-                }
+                    {
+                        File.WriteAllText(pathLocal, rmsg_sfl);
+                        SendMsg($"system rm -r {pathRemote}\r");
+                        break;
+                    }
+                case ActionState.Stop:
+                    {
+                        loading_form.Close();
+                        break;
+                    }
                 default: break;
             }
 
@@ -3358,8 +3364,8 @@ namespace TCPclient
             }
             catch (Exception ex)
             {
-                logger.Error(String.Format($"PROGRESS BAR {ex.Message} {ex.StackTrace} {ex.Source}",DateTime.Now));
-                MessageBox.Show(ex.Message+"hui");
+                logger.Error(String.Format($"PROGRESS BAR {ex.Message} {ex.StackTrace} {ex.Source}", DateTime.Now));
+                MessageBox.Show(ex.Message);
             }
         }
     }
@@ -3374,7 +3380,8 @@ namespace TCPclient
         RemoteShow,
         RemoteEdit,
         LocalShow,
-        LocalEdit
+        LocalEdit,
+        Stop
     }
 
     /*======================*/
