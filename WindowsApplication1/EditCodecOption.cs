@@ -1635,7 +1635,7 @@ namespace TCPclient
             foreach (string[] file in result)
             {
                 ListViewItem item = new ListViewItem(new[]
-                    { file[0], file[1], String.Concat(file[2] + " ", file[3]), file[4] });
+                    { file[4], file[0], file[1], String.Concat(file[2] + " ", file[3]) });
                 listViewRemote.Items.Add(item);
             }
         }
@@ -1647,7 +1647,7 @@ namespace TCPclient
                 return;
 
 
-            if (items[0].SubItems[0].Text.Equals(".."))
+            if (items[0].SubItems[1].Text.Equals(".."))
             {
                 string path = textRemotePath.Text.TrimEnd('/');
                 textRemotePath.Text = path.Substring(0, path.LastIndexOf("/") + 1);
@@ -1657,14 +1657,12 @@ namespace TCPclient
             {
                 sFile = items[0].Text;
                 System.IO.FileInfo file = new System.IO.FileInfo(sFile);
-                if (!items[0].SubItems[3].Text.Contains("/"))
+                if (!items[0].SubItems[0].Text.Contains("/"))
                 {
                     string path = @"" + textRemotePath.Text + file.Name;
 
                     //sFile = items[0].Text;
-                    sizeFile = int.Parse(items[0].SubItems[1].Text);
-                    //TODO
-
+                    sizeFile = int.Parse(items[0].SubItems[2].Text);
                     pathRemote = textRemotePath.Text + sFile;
                     ActionState = ActionState.RemoteShow;
                     LoadingForm_Dialog(ActionState, path, pathRemote);
@@ -3088,7 +3086,9 @@ namespace TCPclient
                 }
             }
         }
+
         public string textFileEdit = "";
+
         public void EditSaveFile(string text, string path)
         {
             SendMsg($"sfl openw {path}\r");
@@ -3118,7 +3118,6 @@ namespace TCPclient
 
         private void OpenLocalFileInLoadingForm(ActionState state, ListViewItem item)
         {
-
             sFile = item.Text;
             sizeFile = int.Parse(item.SubItems[1].Text);
             if (item.SubItems[3].Text == "/")
@@ -3256,8 +3255,8 @@ namespace TCPclient
         private void OpenRemoteFileInLoadingForm(ActionState state, ListViewItem item)
         {
             sFile = item.Text;
-            sizeFile = int.Parse(item.SubItems[1].Text);
-            if (item.SubItems[3].Text == "/")
+            sizeFile = int.Parse(item.SubItems[2].Text);
+            if (item.SubItems[0].Text == "/")
                 return;
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
@@ -3292,7 +3291,7 @@ namespace TCPclient
             sFile = items[0].Text;
             pathRemote = textRemotePath.Text + sFile;
             DialogResult result;
-            string atrFile = items[0].SubItems[3].Text;
+            string atrFile = items[0].SubItems[0].Text;
             if (atrFile == "/")
             {
                 result = MessageBox.Show($"Вы точно хотите удалить папку {pathRemote}?",
@@ -3315,36 +3314,33 @@ namespace TCPclient
             switch (ActionState)
             {
                 case ActionState.RemoteShow:
-                    {
-                        OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
-                        break;
-                    }
+                {
+                    OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
+                    break;
+                }
                 case ActionState.RemoteEdit:
-                    {
-                        OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
-                        break;
-                    }
+                {
+                    OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
+                    break;
+                }
                 case ActionState.RemoteCopy:
-                    {
-                        File.WriteAllText(pathLocal, rmsg_sfl);
-                        break;
-                    }
+                {
+                    File.WriteAllText(pathLocal, rmsg_sfl);
+                    break;
+                }
                 case ActionState.RemoteTransfer:
-                    {
-                        File.WriteAllText(pathLocal, rmsg_sfl);
-                        SendMsg($"system rm -r {pathRemote}\r");
-                        break;
-                    }
+                {
+                    File.WriteAllText(pathLocal, rmsg_sfl);
+                    SendMsg($"system rm -r {pathRemote}\r");
+                    break;
+                }
                 case ActionState.Stop:
-                    {
-                        Invoke((MethodInvoker)(() =>
-                                {
-loading_form.Close();
-                                }
-                            ));
-                      
-                        break;
-                    }
+                {
+                    Invoke((MethodInvoker)(() => { loading_form.Close(); }
+                        ));
+
+                    break;
+                }
                 default: break;
             }
 

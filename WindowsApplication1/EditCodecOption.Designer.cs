@@ -87,10 +87,10 @@
             this.updateButton = new System.Windows.Forms.Button();
             this.textRemotePath = new System.Windows.Forms.TextBox();
             this.listViewRemote = new System.Windows.Forms.ListView();
+            this.remoteAtr = new System.Windows.Forms.ColumnHeader();
             this.remoteName = new System.Windows.Forms.ColumnHeader();
             this.remoteSize = new System.Windows.Forms.ColumnHeader();
             this.remoteDate = new System.Windows.Forms.ColumnHeader();
-            this.remoteAtr = new System.Windows.Forms.ColumnHeader();
             this.remoteMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.showRemoteStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editRemoteStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -684,7 +684,7 @@
             // 
             // listViewRemote
             // 
-            this.listViewRemote.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.remoteName, this.remoteSize, this.remoteDate, this.remoteAtr });
+            this.listViewRemote.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { this.remoteAtr, this.remoteName, this.remoteSize, this.remoteDate });
             this.listViewRemote.ContextMenuStrip = this.remoteMenuStrip;
             this.listViewRemote.FullRowSelect = true;
             this.listViewRemote.HideSelection = false;
@@ -695,6 +695,10 @@
             this.listViewRemote.UseCompatibleStateImageBehavior = false;
             this.listViewRemote.View = System.Windows.Forms.View.Details;
             this.listViewRemote.DoubleClick += new System.EventHandler(this.listViewRemote_DoubleClick);
+            // 
+            // remoteAtr
+            // 
+            this.remoteAtr.Text = "Атрибут";
             // 
             // remoteName
             // 
@@ -710,10 +714,6 @@
             // 
             this.remoteDate.Text = "Дата";
             this.remoteDate.Width = 140;
-            // 
-            // remoteAtr
-            // 
-            this.remoteAtr.Text = "Атрибут";
             // 
             // remoteMenuStrip
             // 
