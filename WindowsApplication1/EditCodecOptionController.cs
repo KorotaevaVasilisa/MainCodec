@@ -209,7 +209,8 @@ namespace TCPclient
                             break;
                     }
                 }
-                if (str.StartsWith(" Ok system:  rm -r")|| str.StartsWith(" Ok system:  mkdir"))
+
+                if (str.StartsWith(" Ok system:  rm -r") || str.StartsWith(" Ok system:  mkdir"))
                     MyParentForm.CdcOptionLsRqst();
 
                 if (str.StartsWith("Ok Ls"))
@@ -236,17 +237,19 @@ namespace TCPclient
                 }
 
 
-                    if (str.StartsWith("sfl openw") && str.Contains("Ok"))
-                    {
+                if (str.StartsWith("sfl openw") && str.Contains("Ok"))
+                {
 //TODO
-                            MyParentForm.SendMsg($"sfl w {MyParentForm.textFileEdit}");
-                    }
+                    if (MyParentForm.ActionState == ActionState.RemoteEdit)
+                        MyParentForm.SendMsg($"sfl w {MyParentForm.textFileEdit}\r");
+                }
 
-                    if (str.StartsWith("sfl w"))
-                    {
-                        //MyParentForm.SendMsg("sfl end");
-                    }
-                
+                if (str.StartsWith("sfl w"))
+                {
+                    if (MyParentForm.ActionState == ActionState.RemoteEdit)
+                        MyParentForm.SendMsg("sfl end");
+                }
+
 
                 if (MyParentForm.ActionState == ActionState.Stop)
                     remoteChanged.onCopyRemoteFile();
@@ -255,15 +258,14 @@ namespace TCPclient
                 {
                     if (!str.Contains("sfl r :."))
                     {
-
                         MyParentForm.CdcOptionSflRRqst();
-                        if(MyParentForm.ActionState == ActionState.Inaction)
+                        if (MyParentForm.ActionState == ActionState.Inaction)
                             continue;
-                        
+
                         byte[] textAsBytes = System.Convert.FromBase64String(str.Substring(5));
-                        string part  = System.Text.Encoding.Default.GetString(textAsBytes);
+                        string part = System.Text.Encoding.Default.GetString(textAsBytes);
                         MyParentForm.rmsg_sfl += part;
-                        int size= Encoding.Default.GetByteCount(MyParentForm.rmsg_sfl);
+                        int size = Encoding.Default.GetByteCount(MyParentForm.rmsg_sfl);
                         remoteChanged.onUpdateProgressBar(size);
                     }
                     else
@@ -313,10 +315,10 @@ namespace TCPclient
                             Parse();
                         }
                     }
-                        catch (Exception e)
-                        {
-                            logger.Error(String.Format("ERROR THREAD " + e.Message.ToString(), this, DateTime.Now));
-                        }
+                    catch (Exception e)
+                    {
+                        logger.Error(String.Format("ERROR THREAD " + e.Message.ToString(), this, DateTime.Now));
+                    }
                 }
             }
         }

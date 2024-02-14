@@ -1593,14 +1593,6 @@ namespace TCPclient
             LocalEnter();
         }
 
-        private void listViewLocal_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                localMenuStrip.Show(MousePosition, ToolStripDropDownDirection.Right);
-            }
-        }
-
         private void listViewRemote_DoubleClick(object sender, EventArgs e)
         {
             //TODO
@@ -3099,10 +3091,9 @@ namespace TCPclient
         public string textFileEdit = "";
         public void EditSaveFile(string text, string path)
         {
-            SendMsg($"sfl openw {path}");
+            SendMsg($"sfl openw {path}\r");
             textFileEdit = text;
-            //SendMsg($"sfl w {text}");
-            //SendMsg("sfl end");
+            ActionState = ActionState.RemoteEdit;
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3346,7 +3337,12 @@ namespace TCPclient
                     }
                 case ActionState.Stop:
                     {
-                        loading_form.Close();
+                        Invoke((MethodInvoker)(() =>
+                                {
+loading_form.Close();
+                                }
+                            ));
+                      
                         break;
                     }
                 default: break;

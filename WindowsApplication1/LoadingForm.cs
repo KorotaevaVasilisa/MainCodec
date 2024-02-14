@@ -76,10 +76,16 @@ namespace TCPclient
 
         private void btCPCancel_Click(object sender, EventArgs e)
         {
-            editCodecForm.ActionState = ActionState.Stop;
-            progressBar1.Value = 0;
-            editCodecForm.SendMsg("sfl abort");
-            Close();
+            if (progressBar1.Visible)
+            {
+                editCodecForm.ActionState = ActionState.Stop;
+                editCodecForm.SendMsg("sfl abort");
+            }
+            else
+            {
+                editCodecForm.ActionState = ActionState.Inaction;
+                Close();
+            }
         }
 
         private void btCPApply_Click(object sender, EventArgs e)
@@ -95,12 +101,14 @@ namespace TCPclient
         public void DownloadProgress(int readed, int total)
         {
             int percent = Convert.ToInt32((readed * 100) / total);
-            logger.Info($"LOADFORM {percent} {readed} {total}");
             if (InvokeRequired)
             {
                 Invoke((MethodInvoker)(() =>
                         {
-                            this.progressBar1.Value = percent;
+                            if(total==0)
+                                this.progressBar1.Value = 100;
+                            else 
+                                this.progressBar1.Value = percent;
                             if (percent == 100)
                                 Close();
                         }

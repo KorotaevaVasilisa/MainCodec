@@ -721,7 +721,6 @@
             this.remoteMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.showRemoteStripMenuItem, this.editRemoteStripMenuItem, this.copyRemoteStripMenuItem, this.transferRemoteStripMenuItem, this.createRemoteStripMenuItem, this.deleteRemoteStripMenuItem });
             this.remoteMenuStrip.Name = "contextMenuStrip1";
             this.remoteMenuStrip.Size = new System.Drawing.Size(205, 148);
-            this.remoteMenuStrip.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.remoteMenuStrip_PreviewKeyDown);
             // 
             // showRemoteStripMenuItem
             // 
@@ -784,7 +783,6 @@
             this.listViewLocal.UseCompatibleStateImageBehavior = false;
             this.listViewLocal.View = System.Windows.Forms.View.Details;
             this.listViewLocal.DoubleClick += new System.EventHandler(this.listView_DoubleClick);
-            this.listViewLocal.MouseUp += new System.Windows.Forms.MouseEventHandler(this.listViewLocal_MouseUp);
             // 
             // ColumnName
             // 
