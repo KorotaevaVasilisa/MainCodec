@@ -8,12 +8,14 @@ namespace TCPclient
     {
         private EditCodecForm editCodecForm = null;
         private string path;
+        private ActionState state;
 
         public LoadingForm(EditCodecForm editCodecForm, ActionState state, string output, string input = "")
         {
             InitializeComponent();
             this.editCodecForm = editCodecForm;
             this.path = output;
+            this.state = state;
             tbFrom.Text = output;
             tbTo.Text = input;
             UpdateUI(state);
@@ -24,53 +26,51 @@ namespace TCPclient
             switch (state)
             {
                 case ActionState.RemoteShow:
-                {
-                    Text = "Загрузка";
-                    btCPCancel.Text = "Прервать";
-                    btCPApply.Visible = false;
-                    progressBar1.Visible = true;
-                    label2.Visible = false;
-                    tbTo.Visible = false;
-                    editCodecForm.CdcOptionSflOpenrRqst(path);
-                    break;
-                }
+                    {
+                        Text = "Загрузка";
+                        btCPCancel.Text = "Прервать";
+                        btCPApply.Visible = false;
+                        progressBar1.Visible = true;
+                        label2.Visible = false;
+                        tbTo.Visible = false;
+                        editCodecForm.CdcOptionSflOpenrRqst(path);
+                        break;
+                    }
                 case ActionState.RemoteEdit:
-                {
-                    Text = "Загрузка";
-                    btCPCancel.Text = "Прервать";
-                    btCPApply.Visible = false;
-                    progressBar1.Visible = true;
-                    label2.Visible = false;
-                    tbTo.Visible = false;
-                    editCodecForm.CdcOptionSflOpenrRqst(path);
-                    break;
-                }
+                    {
+                        Text = "Загрузка";
+                        btCPCancel.Text = "Прервать";
+                        btCPApply.Visible = false;
+                        progressBar1.Visible = true;
+                        label2.Visible = false;
+                        tbTo.Visible = false;
+                        editCodecForm.CdcOptionSflOpenrRqst(path);
+                        break;
+                    }
                 case ActionState.RemoteCopy:
-                {
-                    Text = "Копирование";
-                    btCPApply.Text = "Копировать";
-                    break;
-                }
+                    {
+                        Text = "Копирование";
+                        btCPApply.Text = "Копировать";
+                        break;
+                    }
                 case ActionState.LocalCopy:
-                {
-                    Text = "Копирование";
-                    btCPApply.Text = "Копировать";
-                    btCPApply.Enabled = false;
-                    break;
-                }
+                    {
+                        Text = "Копирование";
+                        btCPApply.Text = "Копировать";
+                        break;
+                    }
                 case ActionState.RemoteTransfer:
-                {
-                    Text = "Перемещение";
-                    btCPApply.Text = "Перенести";
-                    break;
-                }
+                    {
+                        Text = "Перемещение";
+                        btCPApply.Text = "Перенести";
+                        break;
+                    }
                 case ActionState.LocalTransfer:
-                {
-                    Text = "Перемещение";
-                    btCPApply.Text = "Перенести";
-                    btCPApply.Enabled = false;
-                    break;
-                }
+                    {
+                        Text = "Перемещение";
+                        btCPApply.Text = "Перенести";
+                        break;
+                    }
             }
         }
 
@@ -92,7 +92,12 @@ namespace TCPclient
         {
             btCPApply.Enabled = false;
             progressBar1.Visible = true;
-            editCodecForm.CdcOptionSflOpenrRqst(path);
+            if (state == ActionState.RemoteTransfer || state == ActionState.RemoteCopy)
+                editCodecForm.CdcOptionSflOpenrRqst(path);
+            else
+            {
+                //TODO
+            }
         }
 
         private static ILog logger =

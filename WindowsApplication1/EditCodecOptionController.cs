@@ -253,6 +253,7 @@ namespace TCPclient
                     {
                         MyParentForm.SendMsg("sfl end\r");
                         MyParentForm.ActionState = ActionState.Inaction;
+                        MyParentForm.UpdateData();
                     }
                 }
 

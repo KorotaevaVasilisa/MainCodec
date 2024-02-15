@@ -1716,11 +1716,15 @@ namespace TCPclient
         {
             GetDriversForComboBox();
             CdcOptionLsRqst(textRemotePath.Text);
-            //ReadRemoteData();
             LocalRefresh();
         }
 
-
+        public void UpdateData()
+        {
+            GetDriversForComboBox();
+            CdcOptionLsRqst(textRemotePath.Text);
+            LocalRefresh();
+        }
 #if CMD_HISTORY
         static StrHistory strHistory = new StrHistory(20);
         public class StrHistory
@@ -3089,13 +3093,7 @@ namespace TCPclient
 
         public string textFileEdit = "";
 
-        public void EditSaveFile(string text, string path)
-        {
-            //ActionState = ActionState.RemoteEdit;
-            SendMsg($"sfl openw {path}\r");
-            textFileEdit = text;
-            
-        }
+
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -3224,6 +3222,12 @@ namespace TCPclient
 
             ActionState = ActionState.RemoteEdit;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
+        }
+
+        public void EditSaveFile(string text, string path)
+        {
+            SendMsg($"sfl openw {path}\r");
+            textFileEdit = text;
         }
 
         private void copyRemoteStripMenuItem_Click(object sender, EventArgs e)
