@@ -1628,7 +1628,7 @@ namespace TCPclient
 
             if (!textRemotePath.Text.Equals("/"))
             {
-                ListViewItem back = new ListViewItem("..");
+                ListViewItem back = new ListViewItem(new[] { "/", ".." });
                 listViewRemote.Items.Add(back);
             }
 
@@ -1655,7 +1655,7 @@ namespace TCPclient
             }
             else
             {
-                sFile = items[0].Text;
+                sFile = items[0].SubItems[1].Text;
                 System.IO.FileInfo file = new System.IO.FileInfo(sFile);
                 if (!items[0].SubItems[0].Text.Contains("/"))
                 {
@@ -3091,9 +3091,10 @@ namespace TCPclient
 
         public void EditSaveFile(string text, string path)
         {
+            //ActionState = ActionState.RemoteEdit;
             SendMsg($"sfl openw {path}\r");
             textFileEdit = text;
-            ActionState = ActionState.RemoteEdit;
+            
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3253,10 +3254,10 @@ namespace TCPclient
         }
 
         private void OpenRemoteFileInLoadingForm(ActionState state, ListViewItem item)
-        {
-            sFile = item.Text;
+         {
+            sFile = item.SubItems[1].Text;
             sizeFile = int.Parse(item.SubItems[2].Text);
-            if (item.SubItems[0].Text == "/")
+            if (item.Text == "/")
                 return;
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
@@ -3288,7 +3289,7 @@ namespace TCPclient
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
-            sFile = items[0].Text;
+            sFile = items[0].SubItems[1].Text;
             pathRemote = textRemotePath.Text + sFile;
             DialogResult result;
             string atrFile = items[0].SubItems[0].Text;
@@ -3321,7 +3322,7 @@ namespace TCPclient
                 case ActionState.RemoteEdit:
                 {
                     OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
-                    break;
+                    return;
                 }
                 case ActionState.RemoteCopy:
                 {
@@ -3336,7 +3337,8 @@ namespace TCPclient
                 }
                 case ActionState.Stop:
                 {
-                    Invoke((MethodInvoker)(() => { loading_form.Close(); }
+                    Invoke((MethodInvoker)(() => { 
+                        loading_form.Close(); }
                         ));
 
                     break;

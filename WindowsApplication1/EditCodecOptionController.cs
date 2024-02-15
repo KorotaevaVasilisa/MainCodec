@@ -239,15 +239,21 @@ namespace TCPclient
 
                 if (str.StartsWith("sfl openw") && str.Contains("Ok"))
                 {
-//TODO
                     if (MyParentForm.ActionState == ActionState.RemoteEdit)
-                        MyParentForm.SendMsg($"sfl w {MyParentForm.textFileEdit}\r");
+                    {
+                        var plainTextBytes = System.Text.Encoding.Default.GetBytes(MyParentForm.textFileEdit);
+                        var text = System.Convert.ToBase64String(plainTextBytes);
+                        MyParentForm.SendMsg($"sfl w {text}\r");
+                    }
                 }
 
                 if (str.StartsWith("sfl w"))
                 {
                     if (MyParentForm.ActionState == ActionState.RemoteEdit)
-                        MyParentForm.SendMsg("sfl end");
+                    {
+                        MyParentForm.SendMsg("sfl end\r");
+                        MyParentForm.ActionState = ActionState.Inaction;
+                    }
                 }
 
 

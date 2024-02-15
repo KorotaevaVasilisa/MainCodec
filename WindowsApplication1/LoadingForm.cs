@@ -61,13 +61,13 @@ namespace TCPclient
                 case ActionState.RemoteTransfer:
                 {
                     Text = "Перемещение";
-                    btCPApply.Text = "Перенестить";
+                    btCPApply.Text = "Перенести";
                     break;
                 }
                 case ActionState.LocalTransfer:
                 {
                     Text = "Перемещение";
-                    btCPApply.Text = "Перенестить";
+                    btCPApply.Text = "Перенести";
                     btCPApply.Enabled = false;
                     break;
                 }
@@ -105,10 +105,7 @@ namespace TCPclient
             {
                 Invoke((MethodInvoker)(() =>
                         {
-                            if(total==0)
-                                this.progressBar1.Value = 100;
-                            else 
-                                this.progressBar1.Value = percent;
+                            this.progressBar1.Value = percent;
                             if (percent == 100)
                                 Close();
                         }
