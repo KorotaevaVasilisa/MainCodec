@@ -239,7 +239,7 @@ namespace TCPclient
 
                 if (str.StartsWith("sfl openw") && str.Contains("Ok"))
                 {
-                    if (MyParentForm.ActionState == ActionState.RemoteEdit)
+                    if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit)
                     {
                         var plainTextBytes = System.Text.Encoding.Default.GetBytes(MyParentForm.textFileEdit);
                         var text = System.Convert.ToBase64String(plainTextBytes);
@@ -249,16 +249,16 @@ namespace TCPclient
 
                 if (str.StartsWith("sfl w"))
                 {
-                    if (MyParentForm.ActionState == ActionState.RemoteEdit)
+                    if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit)
                     {
                         MyParentForm.SendMsg("sfl end\r");
-                        MyParentForm.ActionState = ActionState.Inaction;
+                        MyParentForm.ActionState = ActionStateEnum.Inaction;
                         MyParentForm.UpdateData();
                     }
                 }
 
 
-                if (MyParentForm.ActionState == ActionState.Stop)
+                if (MyParentForm.ActionState == ActionStateEnum.Stop)
                     remoteChanged.onCopyRemoteFile();
 
                 if (str.StartsWith("sfl r"))
@@ -266,7 +266,7 @@ namespace TCPclient
                     if (!str.Contains("sfl r :."))
                     {
                         MyParentForm.CdcOptionSflRRqst();
-                        if (MyParentForm.ActionState == ActionState.Inaction)
+                        if (MyParentForm.ActionState == ActionStateEnum.Inaction)
                             continue;
 
                         byte[] textAsBytes = System.Convert.FromBase64String(str.Substring(5));

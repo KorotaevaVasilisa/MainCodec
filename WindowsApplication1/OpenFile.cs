@@ -10,9 +10,9 @@ namespace TCPclient
         EditCodecForm editCodecForm = null;
         string path = "";
 
-        ActionState state;
+        ActionStateEnum state;
 
-        public OpenFile(EditCodecForm form, ActionState state, string fileName, string information, string path)
+        public OpenFile(EditCodecForm form, ActionStateEnum state, string fileName, string information, string path)
         {
             InitializeComponent();
             this.editCodecForm = form;
@@ -23,17 +23,17 @@ namespace TCPclient
             UpdateUI(state);
         }
 
-        private void UpdateUI(ActionState state)
+        private void UpdateUI(ActionStateEnum state)
         {
             switch (state)
             {
-                case ActionState.RemoteShow:
+                case ActionStateEnum.RemoteShow:
                     {
                         richTextBox1.ReadOnly = true;
                         btnSave.Enabled = false;
                         break;
                     }
-                    case ActionState.LocalShow:
+                    case ActionStateEnum.LocalShow:
                     {
                         richTextBox1.ReadOnly = true;
                         btnSave.Enabled = false;
@@ -63,7 +63,7 @@ namespace TCPclient
                
             switch (state)
             {
-                case ActionState.LocalEdit:
+                case ActionStateEnum.LocalEdit:
                     {
                         try
                         {
@@ -76,7 +76,7 @@ namespace TCPclient
                         }
                         break;
                     }
-                case ActionState.RemoteEdit:
+                case ActionStateEnum.RemoteEdit:
                     {
                         editCodecForm.EditSaveFile(richTextBox1.Text, path);
                         break;

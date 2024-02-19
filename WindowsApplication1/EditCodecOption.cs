@@ -1089,7 +1089,7 @@ namespace TCPclient
 
         OpenFile open_edit = null;
 
-        public bool OpenFile_Dialog(ActionState state, string fileName, string information, string path)
+        public bool OpenFile_Dialog(ActionStateEnum state, string fileName, string information, string path)
         {
             open_edit = new OpenFile(this, state, fileName, information, path);
             DialogResult res = open_edit.ShowDialog();
@@ -1122,9 +1122,9 @@ namespace TCPclient
 
         LoadingForm loading_form = null;
 
-        public bool LoadingForm_Dialog(ActionState state, string output, string input = "")
+        public bool LoadingForm_Dialog(ActionStateEnum state,int sizeFile, string output, string input = "")
         {
-            loading_form = new LoadingForm(this, state, output, input);
+            loading_form = new LoadingForm(this, state,sizeFile, output, input);
             DialogResult res = loading_form.ShowDialog();
             return res == DialogResult.OK;
         }
@@ -1568,7 +1568,7 @@ namespace TCPclient
                     try
                     {
                         string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
-                        ActionState = ActionState.LocalShow;
+                        ActionState = ActionStateEnum.LocalShow;
                         OpenFile_Dialog(ActionState, file.Name, fileText, pathLocal);
                     }
                     catch (Exception ex)
@@ -1662,10 +1662,10 @@ namespace TCPclient
                     string path = @"" + textRemotePath.Text + file.Name;
 
                     //sFile = items[0].Text;
-                    sizeFile = int.Parse(items[0].SubItems[2].Text);
+                    int sizeFile = int.Parse(items[0].SubItems[2].Text);
                     pathRemote = textRemotePath.Text + sFile;
-                    ActionState = ActionState.RemoteShow;
-                    LoadingForm_Dialog(ActionState, path, pathRemote);
+                    ActionState = ActionStateEnum.RemoteShow;
+                    LoadingForm_Dialog(ActionState, sizeFile, path, pathRemote);
                 }
                 else
                 {
@@ -3079,7 +3079,7 @@ namespace TCPclient
                     try
                     {
                         string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
-                        ActionState = ActionState.LocalEdit;
+                        ActionState = ActionStateEnum.LocalEdit;
                         OpenFile_Dialog(ActionState, file.Name, fileText, pathLocal);
                     }
                     catch (Exception ex)
@@ -3101,7 +3101,7 @@ namespace TCPclient
             if (items.Count == 0)
                 return;
 
-            ActionState = ActionState.LocalCopy;
+            ActionState = ActionStateEnum.LocalCopy;
             OpenLocalFileInLoadingForm(ActionState, items[0]);
         }
 
@@ -3111,20 +3111,20 @@ namespace TCPclient
             if (items.Count == 0)
                 return;
 
-            ActionState = ActionState.LocalTransfer;
+            ActionState = ActionStateEnum.LocalTransfer;
             OpenLocalFileInLoadingForm(ActionState, items[0]);
         }
 
-        private void OpenLocalFileInLoadingForm(ActionState state, ListViewItem item)
+        private void OpenLocalFileInLoadingForm(ActionStateEnum state, ListViewItem item)
         {
             sFile = item.Text;
-            sizeFile = int.Parse(item.SubItems[1].Text);
+            int sizeFile = int.Parse(item.SubItems[1].Text);
             if (item.SubItems[3].Text == "/")
                 return;
 
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            LoadingForm_Dialog(state, pathLocal, pathRemote);
+            LoadingForm_Dialog(state,sizeFile, pathLocal, pathRemote);
         }
 
         CreateFolderForm folderForm;
@@ -3210,7 +3210,7 @@ namespace TCPclient
             if (items.Count == 0)
                 return;
 
-            ActionState = ActionState.RemoteShow;
+            ActionState = ActionStateEnum.RemoteShow;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
         }
 
@@ -3220,7 +3220,7 @@ namespace TCPclient
             if (items.Count == 0)
                 return;
 
-            ActionState = ActionState.RemoteEdit;
+            ActionState = ActionStateEnum.RemoteEdit;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
         }
 
@@ -3236,15 +3236,14 @@ namespace TCPclient
             if (items.Count == 0)
                 return;
 
-            ActionState = ActionState.RemoteCopy;
+            ActionState = ActionStateEnum.RemoteCopy;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
             LocalRefresh();
         }
 
         public string rmsg_sfl = "";
         private string pathRemote, pathLocal, sFile;
-        int sizeFile;
-        public ActionState ActionState;
+        public ActionStateEnum ActionState;
 
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -3252,21 +3251,21 @@ namespace TCPclient
             if (items.Count == 0)
                 return;
 
-            ActionState = ActionState.RemoteTransfer;
+            ActionState = ActionStateEnum.RemoteTransfer;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
             LocalRefresh();
         }
 
-        private void OpenRemoteFileInLoadingForm(ActionState state, ListViewItem item)
+        private void OpenRemoteFileInLoadingForm(ActionStateEnum state, ListViewItem item)
          {
             sFile = item.SubItems[1].Text;
-            sizeFile = int.Parse(item.SubItems[2].Text);
+            int sizeFile = int.Parse(item.SubItems[2].Text);
             if (item.Text == "/")
                 return;
             rmsg_sfl = "";
             pathRemote = textRemotePath.Text + sFile;
             pathLocal = $"{textLocalPath.Text}\\{sFile}";
-            LoadingForm_Dialog(state, pathRemote, pathLocal);
+            LoadingForm_Dialog(state,sizeFile, pathRemote, pathLocal);
         }
 
         private void createRemoteStripMenuItem_Click(object sender, EventArgs e)
@@ -3318,28 +3317,28 @@ namespace TCPclient
         {
             switch (ActionState)
             {
-                case ActionState.RemoteShow:
+                case ActionStateEnum.RemoteShow:
                 {
                     OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
                     break;
                 }
-                case ActionState.RemoteEdit:
+                case ActionStateEnum.RemoteEdit:
                 {
                     OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
                     return;
                 }
-                case ActionState.RemoteCopy:
+                case ActionStateEnum.RemoteCopy:
                 {
                     File.WriteAllText(pathLocal, rmsg_sfl);
                     break;
                 }
-                case ActionState.RemoteTransfer:
+                case ActionStateEnum.RemoteTransfer:
                 {
                     File.WriteAllText(pathLocal, rmsg_sfl);
                     SendMsg($"system rm -r {pathRemote}\r");
                     break;
                 }
-                case ActionState.Stop:
+                case ActionStateEnum.Stop:
                 {
                     Invoke((MethodInvoker)(() => { 
                         loading_form.Close(); }
@@ -3350,15 +3349,16 @@ namespace TCPclient
                 default: break;
             }
 
-            ActionState = ActionState.Inaction;
+            ActionState = ActionStateEnum.Inaction;
         }
 
         public void onUpdateProgressBar(int size)
         {
             try
             {
-                if (ActionState != ActionState.Inaction)
-                    loading_form.DownloadProgress(size, sizeFile);
+                if (ActionState != ActionStateEnum.Inaction)
+                    if(!loading_form.IsDisposed)
+                        loading_form.DownloadProgress(size);
             }
             catch (Exception ex)
             {
@@ -3368,7 +3368,7 @@ namespace TCPclient
         }
     }
 
-    public enum ActionState
+    public enum ActionStateEnum
     {
         Inaction,
         RemoteCopy,

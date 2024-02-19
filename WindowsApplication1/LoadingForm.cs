@@ -8,9 +8,10 @@ namespace TCPclient
     {
         private EditCodecForm editCodecForm = null;
         private string path;
-        private ActionState state;
+        private int sizeFile;
+        private ActionStateEnum state;
 
-        public LoadingForm(EditCodecForm editCodecForm, ActionState state, string output, string input = "")
+        public LoadingForm(EditCodecForm editCodecForm, ActionStateEnum state,int sizeFile, string output, string input = "")
         {
             InitializeComponent();
             this.editCodecForm = editCodecForm;
@@ -18,14 +19,15 @@ namespace TCPclient
             this.state = state;
             tbFrom.Text = output;
             tbTo.Text = input;
+            this.sizeFile = sizeFile;
             UpdateUI(state);
         }
 
-        private void UpdateUI(ActionState state)
+        private void UpdateUI(ActionStateEnum state)
         {
             switch (state)
             {
-                case ActionState.RemoteShow:
+                case ActionStateEnum.RemoteShow:
                     {
                         Text = "Загрузка";
                         btCPCancel.Text = "Прервать";
@@ -36,7 +38,7 @@ namespace TCPclient
                         editCodecForm.CdcOptionSflOpenrRqst(path);
                         break;
                     }
-                case ActionState.RemoteEdit:
+                case ActionStateEnum.RemoteEdit:
                     {
                         Text = "Загрузка";
                         btCPCancel.Text = "Прервать";
@@ -47,25 +49,25 @@ namespace TCPclient
                         editCodecForm.CdcOptionSflOpenrRqst(path);
                         break;
                     }
-                case ActionState.RemoteCopy:
+                case ActionStateEnum.RemoteCopy:
                     {
                         Text = "Копирование";
                         btCPApply.Text = "Копировать";
                         break;
                     }
-                case ActionState.LocalCopy:
+                case ActionStateEnum.LocalCopy:
                     {
                         Text = "Копирование";
                         btCPApply.Text = "Копировать";
                         break;
                     }
-                case ActionState.RemoteTransfer:
+                case ActionStateEnum.RemoteTransfer:
                     {
                         Text = "Перемещение";
                         btCPApply.Text = "Перенести";
                         break;
                     }
-                case ActionState.LocalTransfer:
+                case ActionStateEnum.LocalTransfer:
                     {
                         Text = "Перемещение";
                         btCPApply.Text = "Перенести";
@@ -92,7 +94,7 @@ namespace TCPclient
         {
             btCPApply.Enabled = false;
             progressBar1.Visible = true;
-            if (state == ActionState.RemoteTransfer || state == ActionState.RemoteCopy)
+            if (state == ActionStateEnum.RemoteTransfer || state == ActionStateEnum.RemoteCopy)
                 editCodecForm.CdcOptionSflOpenrRqst(path);
             else
             {
@@ -103,9 +105,9 @@ namespace TCPclient
         private static ILog logger =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public void DownloadProgress(int readed, int total)
+        public void DownloadProgress(int readed)
         {
-            int percent = Convert.ToInt32((readed * 100) / total);
+            int percent = Convert.ToInt32((readed * 100) / sizeFile);
             if (InvokeRequired)
             {
                 Invoke((MethodInvoker)(() =>
@@ -113,7 +115,7 @@ namespace TCPclient
                             this.progressBar1.Value = percent;
                             if (percent == 100)
                                 Close();
-                        }
+                            }
                     ));
             }
             else
@@ -121,7 +123,7 @@ namespace TCPclient
                 this.progressBar1.Value = percent;
                 if (percent == 100)
                     Close();
+                }
             }
         }
-    }
 }
