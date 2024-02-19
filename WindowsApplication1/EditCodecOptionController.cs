@@ -245,11 +245,20 @@ namespace TCPclient
                         var text = System.Convert.ToBase64String(plainTextBytes);
                         MyParentForm.SendMsg($"sfl w {text}\r");
                     }
+
+                    if (MyParentForm.ActionState == ActionStateEnum.LocalTransfer || MyParentForm.ActionState == ActionStateEnum.LocalCopy)
+                    {
+                        var plainTextBytes = System.Text.Encoding.Default.GetBytes(MyParentForm.textFileEdit);
+                        var text = System.Convert.ToBase64String(plainTextBytes);
+                        MyParentForm.SendMsg($"sfl w {text}\r");
+                    }
                 }
 
                 if (str.StartsWith("sfl w"))
                 {
-                    if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit)
+                    if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit ||
+                        MyParentForm.ActionState == ActionStateEnum.LocalTransfer ||
+                        MyParentForm.ActionState == ActionStateEnum.LocalCopy)
                     {
                         MyParentForm.SendMsg("sfl end\r");
                         MyParentForm.ActionState = ActionStateEnum.Inaction;

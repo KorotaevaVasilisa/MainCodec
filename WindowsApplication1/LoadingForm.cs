@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Windows.Forms;
 using log4net;
 
@@ -8,6 +9,7 @@ namespace TCPclient
     {
         private EditCodecForm editCodecForm = null;
         private string path;
+        private string inputPath;
         private int sizeFile;
         private ActionStateEnum state;
 
@@ -20,6 +22,7 @@ namespace TCPclient
             tbFrom.Text = output;
             tbTo.Text = input;
             this.sizeFile = sizeFile;
+            this.inputPath = input;
             UpdateUI(state);
         }
 
@@ -80,12 +83,12 @@ namespace TCPclient
         {
             if (progressBar1.Visible)
             {
-                editCodecForm.ActionState = ActionState.Stop;
+                editCodecForm.ActionState = ActionStateEnum.Stop;
                 editCodecForm.SendMsg("sfl abort");
             }
             else
             {
-                editCodecForm.ActionState = ActionState.Inaction;
+                editCodecForm.ActionState = ActionStateEnum.Inaction;
                 Close();
             }
         }
@@ -98,7 +101,19 @@ namespace TCPclient
                 editCodecForm.CdcOptionSflOpenrRqst(path);
             else
             {
-                //TODO
+                string fileText = System.IO.File.ReadAllText(path, Encoding.UTF8);
+              
+
+                if(state == ActionStateEnum.LocalTransfer)
+                {
+                    System.IO.FileInfo file = new System.IO.FileInfo(path);
+                        if (file.Exists)
+                        {
+                            file.Delete();
+                        }
+                }
+                editCodecForm.EditSaveFile(fileText, inputPath);
+                Close();
             }
         }
 

@@ -3101,6 +3101,9 @@ namespace TCPclient
             if (items.Count == 0)
                 return;
 
+            if (items[0].SubItems[3].Text == "/")
+                return;
+
             ActionState = ActionStateEnum.LocalCopy;
             OpenLocalFileInLoadingForm(ActionState, items[0]);
         }
@@ -3109,6 +3112,9 @@ namespace TCPclient
         {
             ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
             if (items.Count == 0)
+                return;
+
+            if (items[0].SubItems[3].Text == "/")
                 return;
 
             ActionState = ActionStateEnum.LocalTransfer;
@@ -3238,7 +3244,7 @@ namespace TCPclient
 
             ActionState = ActionStateEnum.RemoteCopy;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
-            LocalRefresh();
+            //LocalRefresh();
         }
 
         public string rmsg_sfl = "";
@@ -3253,7 +3259,7 @@ namespace TCPclient
 
             ActionState = ActionStateEnum.RemoteTransfer;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
-            LocalRefresh();
+            //LocalRefresh();
         }
 
         private void OpenRemoteFileInLoadingForm(ActionStateEnum state, ListViewItem item)
@@ -3330,13 +3336,15 @@ namespace TCPclient
                 case ActionStateEnum.RemoteCopy:
                 {
                     File.WriteAllText(pathLocal, rmsg_sfl);
+                        LocalRefresh();
                     break;
                 }
                 case ActionStateEnum.RemoteTransfer:
                 {
                     File.WriteAllText(pathLocal, rmsg_sfl);
                     SendMsg($"system rm -r {pathRemote}\r");
-                    break;
+                    LocalRefresh();
+                        break;
                 }
                 case ActionStateEnum.Stop:
                 {

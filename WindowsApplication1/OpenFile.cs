@@ -68,7 +68,7 @@ namespace TCPclient
                         try
                         {
                             System.IO.File.WriteAllText(path, richTextBox1.Text);
-                            MessageBox.Show("Файл сохранен");
+                            editCodecForm.UpdateData();
                         }
                         catch (Exception ex)
                         {
