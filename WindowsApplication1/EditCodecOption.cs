@@ -4,6 +4,7 @@
 //#define PROB_CDCMESSAGE  //проба разбора сообщений от кодека по формату Tiscada
 //#define CMD_HISTORY 
 
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,7 +16,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using log4net;
 
 //using File = System.IO.File;
 
@@ -297,7 +297,7 @@ namespace TCPclient
 #endif
             ReadStationsFile();
             //if (!okcfg)
-            //    MessageBox.Show("Некорректное значение IP кодека", "Ошибка");
+            //    MessageBox.RemoteShow("Некорректное значение IP кодека", "Ошибка");
             timerTstConnect.Start();
         }
 
@@ -359,7 +359,7 @@ namespace TCPclient
                             //{
                             //    byte[] data = new byte[BitConverter.ToInt32(datalength, 0)];
                             //    stream.Read(data, 0, data.Length);
-                            //    MessageBox.Show(System.Environment.NewLine + "Client : " + Encoding.Default.GetString(data));
+                            //    MessageBox.RemoteShow(System.Environment.NewLine + "Client : " + Encoding.Default.GetString(data));
                             //}
                         }
                     }
@@ -372,15 +372,15 @@ namespace TCPclient
   //     s += "  tcp_client=null";
   // else if (!tcp_client.Connected)
   //         s += "  tcp_client.Connected=false";
-  // MessageBox.Show(s);
+  // MessageBox.RemoteShow(s);
                               LossConnect();
                           } */
                         //Class1.server.Start(); 
-                        //MessageBox.Show("Waiting For Connection");
+                        //MessageBox.RemoteShow("Waiting For Connection");
                         //new Thread(() =>
                         //{
                         //    Class1.client = Class1.server.AcceptTcpClient();
-                        //    MessageBox.Show("Connected To Client");
+                        //    MessageBox.RemoteShow("Connected To Client");
                         //    if (Class1.client.Connected)
                         //    {
                         //        Class1.ServerReceive();
@@ -854,6 +854,7 @@ namespace TCPclient
             catch (Exception e)
             {
                 logger.Error($"SEND MSG {e.StackTrace} {e.Message}");
+                MessageBox.Show(e.Message);
             }
         }
 
@@ -921,10 +922,21 @@ namespace TCPclient
             SendMsg("get o1;get o2;get o3;get o4\r");
         }
 
-        private void CdcOptionLsRqst(string text = "")
+        public void CdcOptionLsRqst(string text = "")
         {
             rmsg_ls = "";
             SendMsg("Ls " + text + "\r");
+        }
+
+        public void CdcOptionSflOpenrRqst(string path)
+        {
+            rmsg_sfl = "";
+            SendMsg($"sfl openr {path}\r");
+        }
+
+        public void CdcOptionSflRRqst()
+        {
+            SendMsg("sfl r\r");
         }
 
         /*===================================================*/
@@ -1077,9 +1089,9 @@ namespace TCPclient
 
         OpenFile open_edit = null;
 
-        public bool OpenFile_Dialog(string path, bool readOnly)
+        public bool OpenFile_Dialog(ActionStateEnum state, string fileName, string information, string path)
         {
-            open_edit = new OpenFile(this, path, readOnly);
+            open_edit = new OpenFile(this, state, fileName, information, path);
             DialogResult res = open_edit.ShowDialog();
             return res == DialogResult.OK;
         }
@@ -1105,6 +1117,15 @@ namespace TCPclient
         {
             program_edit = new OutsCodecs(this);
             DialogResult res = program_edit.ShowDialog();
+            return res == DialogResult.OK;
+        }
+
+        LoadingForm loading_form = null;
+
+        public bool LoadingForm_Dialog(ActionStateEnum state,int sizeFile, string output, string input = "")
+        {
+            loading_form = new LoadingForm(this, state,sizeFile, output, input);
+            DialogResult res = loading_form.ShowDialog();
             return res == DialogResult.OK;
         }
 
@@ -1543,18 +1564,23 @@ namespace TCPclient
                 System.IO.FileInfo file = new System.IO.FileInfo(sFile);
                 if (!items[0].SubItems[3].Text.Contains("/"))
                 {
-                    string path = @"" + textLocalPath.Text + "\\" + file.Name;
-
-                    // if ((file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    if (items[0].SubItems[3].Text.Contains("r"))
-                        OpenFile_Dialog(path, true);
-                    else
-                        OpenFile_Dialog(path, false);
+                    pathLocal = @"" + textLocalPath.Text + "\\" + file.Name;
+                    try
+                    {
+                        string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
+                        ActionState = ActionStateEnum.LocalShow;
+                        OpenFile_Dialog(ActionState, file.Name, fileText, pathLocal);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        logger.Error(String.Format($"{ex.Message} {ex.StackTrace}", DateTime.Now));
+                    }
                 }
                 else
                 {
                     if (textLocalPath.Text.EndsWith("\\"))
-                        textLocalPath.Text = textLocalPath.Text + file.Name.ToString();
+                        textLocalPath.Text += file.Name.ToString();
                     else textLocalPath.Text = textLocalPath.Text + "\\" + file.Name.ToString();
                     LocalRefresh();
                 }
@@ -1565,14 +1591,6 @@ namespace TCPclient
         private void listView_DoubleClick(object sender, EventArgs e)
         {
             LocalEnter();
-        }
-
-        private void listViewLocal_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                contextMenuStrip1.Show(MousePosition, ToolStripDropDownDirection.Right);
-            }
         }
 
         private void listViewRemote_DoubleClick(object sender, EventArgs e)
@@ -1610,14 +1628,14 @@ namespace TCPclient
 
             if (!textRemotePath.Text.Equals("/"))
             {
-                ListViewItem back = new ListViewItem("..");
+                ListViewItem back = new ListViewItem(new[] { "/", ".." });
                 listViewRemote.Items.Add(back);
             }
 
             foreach (string[] file in result)
             {
                 ListViewItem item = new ListViewItem(new[]
-                    { file[0], file[1], String.Concat(file[2] + " ", file[3]), file[4] });
+                    { file[4], file[0], file[1], String.Concat(file[2] + " ", file[3]) });
                 listViewRemote.Items.Add(item);
             }
         }
@@ -1629,9 +1647,7 @@ namespace TCPclient
                 return;
 
 
-            //MessageBox.Show(sFile);
-
-            if (items[0].SubItems[0].Text.Equals(".."))
+            if (items[0].SubItems[1].Text.Equals(".."))
             {
                 string path = textRemotePath.Text.TrimEnd('/');
                 textRemotePath.Text = path.Substring(0, path.LastIndexOf("/") + 1);
@@ -1639,17 +1655,17 @@ namespace TCPclient
             }
             else
             {
-                string sFile = items[0].Text;
+                sFile = items[0].SubItems[1].Text;
                 System.IO.FileInfo file = new System.IO.FileInfo(sFile);
-                if (!items[0].SubItems[3].Text.Contains("/"))
+                if (!items[0].SubItems[0].Text.Contains("/"))
                 {
                     string path = @"" + textRemotePath.Text + file.Name;
 
-                    // if ((file.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    if (items[0].SubItems[3].Text.Contains("r"))
-                        OpenFile_Dialog(path, true);
-                    else
-                        OpenFile_Dialog(path, false);
+                    //sFile = items[0].Text;
+                    int sizeFile = int.Parse(items[0].SubItems[2].Text);
+                    pathRemote = textRemotePath.Text + sFile;
+                    ActionState = ActionStateEnum.RemoteShow;
+                    LoadingForm_Dialog(ActionState, sizeFile, path, pathRemote);
                 }
                 else
                 {
@@ -1699,10 +1715,16 @@ namespace TCPclient
         private void button1_Click(object sender, EventArgs e)
         {
             GetDriversForComboBox();
-            ReadRemoteData();
+            CdcOptionLsRqst(textRemotePath.Text);
+            LocalRefresh();
         }
 
-
+        public void UpdateData()
+        {
+            GetDriversForComboBox();
+            CdcOptionLsRqst(textRemotePath.Text);
+            LocalRefresh();
+        }
 #if CMD_HISTORY
         static StrHistory strHistory = new StrHistory(20);
         public class StrHistory
@@ -3033,22 +3055,90 @@ namespace TCPclient
 
         private void editStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
+            if (items.Count == 0)
+                return;
+            string sFile = items[0].Text;
+
+            if (items[0].Text.Equals(".."))
+            {
+                return;
+            }
+            else
+            {
+                System.IO.FileInfo file = new System.IO.FileInfo(sFile);
+                if (!items[0].SubItems[3].Text.Contains("/"))
+                {
+                    pathLocal = @"" + textLocalPath.Text + "\\" + file.Name;
+                    /*
+                                        if (items[0].SubItems[3].Text.Contains("r"))
+                                            OpenFile_Dialog(path, true);
+                                        else
+                                            OpenFile_Dialog(path, false);
+                    */
+                    try
+                    {
+                        string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
+                        ActionState = ActionStateEnum.LocalEdit;
+                        OpenFile_Dialog(ActionState, file.Name, fileText, pathLocal);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        logger.Error(String.Format($"{ex.Message} {ex.StackTrace}", DateTime.Now));
+                    }
+                }
+            }
         }
+
+        public string textFileEdit = "";
+
+
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            if (items[0].SubItems[3].Text == "/")
+                return;
+
+            ActionState = ActionStateEnum.LocalCopy;
+            OpenLocalFileInLoadingForm(ActionState, items[0]);
         }
 
         private void transferStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            ListView.SelectedListViewItemCollection items = listViewLocal.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            if (items[0].SubItems[3].Text == "/")
+                return;
+
+            ActionState = ActionStateEnum.LocalTransfer;
+            OpenLocalFileInLoadingForm(ActionState, items[0]);
         }
+
+        private void OpenLocalFileInLoadingForm(ActionStateEnum state, ListViewItem item)
+        {
+            sFile = item.Text;
+            int sizeFile = int.Parse(item.SubItems[1].Text);
+            if (item.SubItems[3].Text == "/")
+                return;
+
+            pathRemote = textRemotePath.Text + sFile;
+            pathLocal = $"{textLocalPath.Text}\\{sFile}";
+            LoadingForm_Dialog(state,sizeFile, pathLocal, pathRemote);
+        }
+
+        CreateFolderForm folderForm;
 
         private void createStripMenuItem_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            folderForm = new CreateFolderForm(this, true);
+            folderForm.ShowDialog();
         }
 
         private void deleteStripMenuItem_Click(object sender, EventArgs e)
@@ -3093,6 +3183,204 @@ namespace TCPclient
                 }
             }
         }
+
+        private void remoteMenuStrip_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.F3:
+                    showRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F4:
+                    editRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F5:
+                    copyRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F6:
+                    transferRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F7:
+                    createRemoteStripMenuItem_Click(sender, e);
+                    break;
+                case Keys.F8:
+                    deleteRemoteStripMenuItem_Click(sender, e);
+                    break;
+            }
+        }
+
+
+        private void showRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RemoteEnter();
+        }
+
+        private void editRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            ActionState = ActionStateEnum.RemoteEdit;
+            OpenRemoteFileInLoadingForm(ActionState, items[0]);
+        }
+
+        public void EditSaveFile(string text, string path)
+        {
+            SendMsg($"sfl openw {path}\r");
+            textFileEdit = text;
+        }
+
+        private void copyRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            ActionState = ActionStateEnum.RemoteCopy;
+            OpenRemoteFileInLoadingForm(ActionState, items[0]);
+        }
+
+        public string rmsg_sfl = "";
+        private string pathRemote, pathLocal, sFile;
+        public ActionStateEnum ActionState;
+
+        private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
+
+            ActionState = ActionStateEnum.RemoteTransfer;
+            OpenRemoteFileInLoadingForm(ActionState, items[0]);
+        }
+
+        private void OpenRemoteFileInLoadingForm(ActionStateEnum state, ListViewItem item)
+         {
+            sFile = item.SubItems[1].Text;
+            int sizeFile = int.Parse(item.SubItems[2].Text);
+            if (item.Text == "/")
+                return;
+            rmsg_sfl = "";
+            pathRemote = textRemotePath.Text + sFile;
+            pathLocal = $"{textLocalPath.Text}\\{sFile}";
+            LoadingForm_Dialog(state,sizeFile, pathRemote, pathLocal);
+        }
+
+        private void createRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+            folderForm = new CreateFolderForm(this, false);
+            folderForm.ShowDialog();
+        }
+
+        public void CreateFolder(bool isLocal, string nameFolder)
+        {
+            if (isLocal)
+            {
+                Directory.CreateDirectory($"{textLocalPath.Text}\\{nameFolder}");
+                LocalRefresh();
+            }
+            else
+            {
+                SendMsg($"system mkdir {textRemotePath.Text}{nameFolder}\r");
+            }
+        }
+
+        private void deleteRemoteStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
+            if (items.Count == 0)
+                return;
+            sFile = items[0].SubItems[1].Text;
+            pathRemote = textRemotePath.Text + sFile;
+            DialogResult result;
+            string atrFile = items[0].SubItems[0].Text;
+            if (atrFile == "/")
+            {
+                result = MessageBox.Show($"Вы точно хотите удалить папку {pathRemote}?",
+                    "Удаление папки", MessageBoxButtons.YesNo);
+            }
+            else
+            {
+                result = MessageBox.Show($"Вы точно хотите удалить файл {pathRemote}?",
+                    "Удаление файла", MessageBoxButtons.YesNo);
+            }
+
+            if (result == DialogResult.Yes)
+            {
+                SendMsg($"system rm -r {pathRemote}\r");
+            }
+        }
+
+        public void onCopyRemoteFile()
+        {
+            switch (ActionState)
+            {
+                case ActionStateEnum.RemoteShow:
+                {
+                    OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
+                    break;
+                }
+                case ActionStateEnum.RemoteEdit:
+                {
+                    OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
+                    return;
+                }
+                case ActionStateEnum.RemoteCopy:
+                {
+                    File.WriteAllText(pathLocal, rmsg_sfl);
+                        LocalRefresh();
+                    break;
+                }
+                case ActionStateEnum.RemoteTransfer:
+                {
+                    File.WriteAllText(pathLocal, rmsg_sfl);
+                    SendMsg($"system rm -r {pathRemote}\r");
+                    LocalRefresh();
+                        break;
+                }
+                case ActionStateEnum.Stop:
+                {
+                    Invoke((MethodInvoker)(() => { 
+                        loading_form.Close(); }
+                        ));
+
+                    break;
+                }
+                default: break;
+            }
+
+            ActionState = ActionStateEnum.Inaction;
+        }
+
+        public void onUpdateProgressBar(int size)
+        {
+            try
+            {
+                if (ActionState != ActionStateEnum.Inaction)
+                    if(!loading_form.IsDisposed)
+                        loading_form.DownloadProgress(size);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(String.Format($"PROGRESS BAR {ex.Message} {ex.StackTrace} {ex.Source}", DateTime.Now));
+                MessageBox.Show(ex.Message);
+            }
+        }
+    }
+
+    public enum ActionStateEnum
+    {
+        Inaction,
+        RemoteCopy,
+        RemoteTransfer,
+        LocalCopy,
+        LocalTransfer,
+        RemoteShow,
+        RemoteEdit,
+        LocalShow,
+        LocalEdit,
+        Stop
     }
 
     /*======================*/

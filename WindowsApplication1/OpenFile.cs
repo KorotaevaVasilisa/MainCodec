@@ -7,15 +7,39 @@ namespace TCPclient
 {
     public partial class OpenFile : Form
     {
-        EditCodecForm MyParentForm = null;
-        string sFile = "";
-        public OpenFile(EditCodecForm form, string pathFile, bool readOnly)
+        EditCodecForm editCodecForm = null;
+        string path = "";
+
+        ActionStateEnum state;
+
+        public OpenFile(EditCodecForm form, ActionStateEnum state, string fileName, string information, string path)
         {
             InitializeComponent();
-            this.MyParentForm = form;
-            this.DialogResult = DialogResult.Cancel;
-            ReadFile(pathFile, readOnly);
-            sFile = pathFile;
+            this.editCodecForm = form;
+            this.state = state;
+            this.path = path;
+            Text = fileName;
+            richTextBox1.Text = information;
+            UpdateUI(state);
+        }
+
+        private void UpdateUI(ActionStateEnum state)
+        {
+            switch (state)
+            {
+                case ActionStateEnum.RemoteShow:
+                    {
+                        richTextBox1.ReadOnly = true;
+                        btnSave.Enabled = false;
+                        break;
+                    }
+                    case ActionStateEnum.LocalShow:
+                    {
+                        richTextBox1.ReadOnly = true;
+                        btnSave.Enabled = false;
+                        break;
+                    }
+            }
         }
 
         private void ReadFile(string pathFile, bool readOnly)
@@ -29,16 +53,41 @@ namespace TCPclient
             }
             catch (IOException e)
             {
-                Console.WriteLine("The file could not be read:");
-                Console.WriteLine(e.Message);
+                MessageBox.Show(e.Message);
             }
             richTextBox1.ReadOnly = readOnly;
         }
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-            System.IO.File.WriteAllText(sFile, richTextBox1.Text);
-            MessageBox.Show("Файл сохранен");
+               
+            switch (state)
+            {
+                case ActionStateEnum.LocalEdit:
+                    {
+                        try
+                        {
+                            System.IO.File.WriteAllText(path, richTextBox1.Text);
+                            editCodecForm.UpdateData();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+                case ActionStateEnum.RemoteEdit:
+                    {
+                        editCodecForm.EditSaveFile(richTextBox1.Text, path);
+                        break;
+                    }
+            }
+            Close();
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

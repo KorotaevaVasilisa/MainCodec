@@ -65,6 +65,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LoadingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoadingForm.Designer.cs">
+      <DependentUpon>LoadingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CreateFolderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateFolderForm.Designer.cs">
+      <DependentUpon>CreateFolderForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="FMedit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +128,13 @@
       <DependentUpon>OutsCodecs.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="LoadingForm.resx">
+      <DependentUpon>LoadingForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CreateFolderForm.resx">
+      <DependentUpon>CreateFolderForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FMedit.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FMedit.cs</DependentUpon>

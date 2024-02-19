@@ -1,12 +1,11 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using log4net;
 
 namespace TCPclient
 {
@@ -119,7 +118,7 @@ namespace TCPclient
                     {
                         if (!MyParentForm.findcdcs)
                         {
-                            //MyParentForm.findcdcs = true;
+                            //editCodecForm.findcdcs = true;
                             MyParentForm.connect = true;
                             MyParentForm.SetLabelStatus("connected");
                         }
@@ -211,29 +210,84 @@ namespace TCPclient
                     }
                 }
 
-                try
+                if (str.StartsWith(" Ok system:  rm -r") || str.StartsWith(" Ok system:  mkdir"))
+                    MyParentForm.CdcOptionLsRqst();
+
+                if (str.StartsWith("Ok Ls"))
                 {
-                    if (str.StartsWith("Ok Ls"))
+                    MyParentForm.rmsg_ls = str;
+                    while (true)
                     {
-                        MyParentForm.rmsg_ls = str;
-                        while (true)
+                        str = GetLine();
+                        MyParentForm.rmsg_ls += str;
+                        MyParentForm.AddMsgToCon(str, true);
+                        if (str.StartsWith(":."))
                         {
-                            str = GetLine();
-                            MyParentForm.rmsg_ls += str;
-                            MyParentForm.AddMsgToCon(str, true);
-                            if (str.StartsWith(":."))
-                            {
-                                string[] text = MyParentForm.rmsg_ls.Split('\r', '\n');
-                                List<string> list = new List<string>(text);
-                                remoteChanged.onChanged(list);
-                                break;
-                            }
+                            string[] text = MyParentForm.rmsg_ls.Split('\r', '\n');
+                            List<string> list = new List<string>(text);
+                            remoteChanged.onChanged(list);
+                            break;
                         }
                     }
                 }
-                catch (Exception e)
+
+                if (str.StartsWith("sfl openr") && str.Contains("Ok"))
                 {
-                    logger.Error(String.Format($"{e.StackTrace} {e.Message}", this, DateTime.Now));
+                    MyParentForm.CdcOptionSflRRqst();
+                }
+
+
+                if (str.StartsWith("sfl openw") && str.Contains("Ok"))
+                {
+                    if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit)
+                    {
+                        var plainTextBytes = System.Text.Encoding.Default.GetBytes(MyParentForm.textFileEdit);
+                        var text = System.Convert.ToBase64String(plainTextBytes);
+                        MyParentForm.SendMsg($"sfl w {text}\r");
+                    }
+
+                    if (MyParentForm.ActionState == ActionStateEnum.LocalTransfer || MyParentForm.ActionState == ActionStateEnum.LocalCopy)
+                    {
+                        var plainTextBytes = System.Text.Encoding.Default.GetBytes(MyParentForm.textFileEdit);
+                        var text = System.Convert.ToBase64String(plainTextBytes);
+                        MyParentForm.SendMsg($"sfl w {text}\r");
+                    }
+                }
+
+                if (str.StartsWith("sfl w"))
+                {
+                    if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit ||
+                        MyParentForm.ActionState == ActionStateEnum.LocalTransfer ||
+                        MyParentForm.ActionState == ActionStateEnum.LocalCopy)
+                    {
+                        MyParentForm.SendMsg("sfl end\r");
+                        MyParentForm.ActionState = ActionStateEnum.Inaction;
+                        MyParentForm.UpdateData();
+                    }
+                }
+
+
+                if (MyParentForm.ActionState == ActionStateEnum.Stop)
+                    remoteChanged.onCopyRemoteFile();
+
+                if (str.StartsWith("sfl r"))
+                {
+                    if (!str.Contains("sfl r :."))
+                    {
+                        MyParentForm.CdcOptionSflRRqst();
+                        if (MyParentForm.ActionState == ActionStateEnum.Inaction)
+                            continue;
+
+                        byte[] textAsBytes = System.Convert.FromBase64String(str.Substring(5));
+                        string part = System.Text.Encoding.Default.GetString(textAsBytes);
+                        MyParentForm.rmsg_sfl += part;
+                        int size = Encoding.Default.GetByteCount(MyParentForm.rmsg_sfl);
+                        remoteChanged.onUpdateProgressBar(size);
+                    }
+                    else
+                    {
+                        remoteChanged.onCopyRemoteFile();
+                    }
                 }
 
 
