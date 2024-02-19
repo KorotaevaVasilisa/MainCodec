@@ -3212,12 +3212,7 @@ namespace TCPclient
 
         private void showRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
-            ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
-            if (items.Count == 0)
-                return;
-
-            ActionState = ActionStateEnum.RemoteShow;
-            OpenRemoteFileInLoadingForm(ActionState, items[0]);
+            RemoteEnter();
         }
 
         private void editRemoteStripMenuItem_Click(object sender, EventArgs e)
@@ -3244,7 +3239,6 @@ namespace TCPclient
 
             ActionState = ActionStateEnum.RemoteCopy;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
-            //LocalRefresh();
         }
 
         public string rmsg_sfl = "";
@@ -3259,7 +3253,6 @@ namespace TCPclient
 
             ActionState = ActionStateEnum.RemoteTransfer;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
-            //LocalRefresh();
         }
 
         private void OpenRemoteFileInLoadingForm(ActionStateEnum state, ListViewItem item)
