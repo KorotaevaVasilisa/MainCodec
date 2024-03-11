@@ -241,31 +241,23 @@ namespace TCPclient
                 {
                     if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit)
                     {
-                        var plainTextBytes = System.Text.Encoding.Default.GetBytes(MyParentForm.textFileEdit);
+                        var plainTextBytes = Encoding.Default.GetBytes(MyParentForm.textFileEdit);
                         var text = System.Convert.ToBase64String(plainTextBytes);
+                        int size = Encoding.Default.GetByteCount(text);
+                        //MessageBox.Show(size.ToString());
                         MyParentForm.SendMsg($"sfl w {text}\r");
                     }
 
                     if (MyParentForm.ActionState == ActionStateEnum.LocalTransfer || MyParentForm.ActionState == ActionStateEnum.LocalCopy)
                     {
-                        var plainTextBytes = System.Text.Encoding.Default.GetBytes(MyParentForm.textFileEdit);
-                        var text = System.Convert.ToBase64String(plainTextBytes);
-                        MyParentForm.SendMsg($"sfl w {text}\r");
+                        /*
+                            var plainTextBytes = System.Text.Encoding.Default.GetBytes(line);                          
+                            var text = System.Convert.ToBase64String(plainTextBytes);
+                        MyParentForm.SendMsg($"sfl w {text}\r");*/
+                        MyParentForm.ReadBlockLocalFile();
+                        
                     }
                 }
-
-                if (str.StartsWith("sfl w"))
-                {
-                    if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit ||
-                        MyParentForm.ActionState == ActionStateEnum.LocalTransfer ||
-                        MyParentForm.ActionState == ActionStateEnum.LocalCopy)
-                    {
-                        MyParentForm.SendMsg("sfl end\r");
-                        MyParentForm.ActionState = ActionStateEnum.Inaction;
-                        MyParentForm.UpdateData();
-                    }
-                }
-
 
                 if (MyParentForm.ActionState == ActionStateEnum.Stop)
                     remoteChanged.onCopyRemoteFile();
@@ -278,11 +270,13 @@ namespace TCPclient
                         if (MyParentForm.ActionState == ActionStateEnum.Inaction)
                             continue;
 
-                        byte[] textAsBytes = System.Convert.FromBase64String(str.Substring(5));
-                        string part = System.Text.Encoding.Default.GetString(textAsBytes);
+                        byte[] textAsBytes = System.Convert.FromBase64String(str.Substring(5)); 
+                        //TODO
+                        Encoding encoding = Encoding.GetEncoding("windows-1251");
+                        var part = encoding.GetString(textAsBytes);
+                        //string part = Encoding.Default.GetString(textAsBytes);
                         MyParentForm.rmsg_sfl += part;
-                        int size = Encoding.Default.GetByteCount(MyParentForm.rmsg_sfl);
-                        remoteChanged.onUpdateProgressBar(size);
+                        remoteChanged.onUpdateProgressBar(textAsBytes.Length);
                     }
                     else
                     {

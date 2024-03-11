@@ -78,7 +78,7 @@ namespace TCPclient
                     }
                 case ActionStateEnum.RemoteEdit:
                     {
-                        editCodecForm.EditSaveFile(richTextBox1.Text, path);
+                        //editCodecForm.EditSaveFile(richTextBox1.Text, path);
                         break;
                     }
             }

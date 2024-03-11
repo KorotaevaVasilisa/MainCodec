@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using log4net;
@@ -101,43 +102,54 @@ namespace TCPclient
                 editCodecForm.CdcOptionSflOpenrRqst(path);
             else
             {
-                string fileText = System.IO.File.ReadAllText(path, Encoding.UTF8);
-              
-
-                if(state == ActionStateEnum.LocalTransfer)
+                editCodecForm.EditSaveFile(sizeFile, inputPath);
+                /*
+                try
                 {
-                    System.IO.FileInfo file = new System.IO.FileInfo(path);
+                    
+                    string fileText = System.IO.File.ReadAllText(path, Encoding.UTF8);
+                    //var stringsBytes = File.ReadAllLines(path, Encoding.UTF8);
+                    if (state == ActionStateEnum.LocalTransfer)
+                    {
+                        System.IO.FileInfo file = new System.IO.FileInfo(path);
                         if (file.Exists)
                         {
                             file.Delete();
                         }
+                    }
+                    editCodecForm.EditSaveFile(sizeFile,path);
+                    //Close();
                 }
-                editCodecForm.EditSaveFile(fileText, inputPath);
-                Close();
+                catch( IOException ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }*/
             }
         }
 
         private static ILog logger =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        public void DownloadProgress(int readed)
+        int readed = 0;
+        public void DownloadProgress(int package)
         {
-            int percent = Convert.ToInt32((readed * 100) / sizeFile);
-            if (InvokeRequired)
-            {
-                Invoke((MethodInvoker)(() =>
-                        {
-                            this.progressBar1.Value = percent;
-                            if (percent == 100)
-                                Close();
+                readed += package;
+                int percent = Convert.ToInt32((readed * 100) / sizeFile);
+                if (InvokeRequired)
+                {
+                    Invoke((MethodInvoker)(() =>
+                            {
+                                this.progressBar1.Value = percent;
+                                if (percent == 100)
+                                    Close();
                             }
-                    ));
-            }
-            else
-            {
-                this.progressBar1.Value = percent;
-                if (percent == 100)
-                    Close();
+                        ));
+                }
+                else
+                {
+                    this.progressBar1.Value = percent;
+                    if (percent == 100)
+                        Close();
                 }
             }
         }

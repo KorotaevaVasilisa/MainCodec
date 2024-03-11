@@ -3091,7 +3091,7 @@ namespace TCPclient
             }
         }
 
-        public string textFileEdit = "";
+
 
 
 
@@ -3225,10 +3225,68 @@ namespace TCPclient
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
         }
 
-        public void EditSaveFile(string text, string path)
+        int sizeReadFile;
+        string pathToCopy;
+        public string textFileEdit = "";
+        public void EditSaveFile(int size, string path)
         {
             SendMsg($"sfl openw {path}\r");
-            textFileEdit = text;
+            this.sizeReadFile = size;
+            this.pathToCopy = path;
+        }
+
+        public void EditSaveFile(int size, string path, string text)
+        {
+            SendMsg($"sfl openw {path}\r");
+            this.sizeReadFile = size;
+            this.pathToCopy = path;
+        }
+
+        public void ReadBlockLocalFile()
+        {
+            using (FileStream fstream = File.OpenRead(pathLocal))
+            {
+                int count = 0;
+                int size = (int)fstream.Length;
+                int remainder = size;
+                do
+                {
+                    
+                    fstream.Seek(count * 600, SeekOrigin.Begin);
+                    byte[] buffer;
+                    if (remainder < 600)
+                    {
+                        buffer = new byte[remainder];
+                        fstream.Read(buffer, 0, remainder);
+                    }
+                    else
+                    {
+                        buffer = new byte[600];
+                        fstream.Read(buffer, 0, 600);
+                    }
+                    //TODO
+                    //string textFromFile = Encoding.UTF8.GetString(buffer);
+                    //byte[] text = System.Text.Encoding.Default.GetBytes(textFromFile);
+                    var data = System.Convert.ToBase64String(buffer);
+                    SendMsg($"sfl w {data}\r");
+                    count++;
+                    onUpdateProgressBar(buffer.Length);
+                    
+                    remainder = (int)fstream.Length - count * 600;
+                } while (remainder > 0);
+
+                    if (ActionState == ActionStateEnum.LocalTransfer)
+                {
+                    System.IO.FileInfo file = new System.IO.FileInfo(pathLocal);
+                    if (file.Exists)
+                    {
+                        file.Delete();
+                    }
+
+                }
+                SendMsg($"sfl end\r");
+                fstream.Close();
+            }
         }
 
         private void copyRemoteStripMenuItem_Click(object sender, EventArgs e)
@@ -3242,7 +3300,7 @@ namespace TCPclient
         }
 
         public string rmsg_sfl = "";
-        private string pathRemote, pathLocal, sFile;
+        public string pathRemote, pathLocal, sFile;
         public ActionStateEnum ActionState;
 
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
