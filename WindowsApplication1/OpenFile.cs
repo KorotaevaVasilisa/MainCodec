@@ -42,22 +42,6 @@ namespace TCPclient
             }
         }
 
-        private void ReadFile(string pathFile, bool readOnly)
-        {
-            try
-            {
-                //               Encoding encoding = Encoding.GetEncoding("windows-1251");
-                string fileText = System.IO.File.ReadAllText(pathFile, Encoding.UTF8);
-                richTextBox1.Text = fileText;
-
-            }
-            catch (IOException e)
-            {
-                MessageBox.Show(e.Message);
-            }
-            richTextBox1.ReadOnly = readOnly;
-        }
-
         private void saveButton_Click(object sender, EventArgs e)
         {
                
@@ -77,8 +61,8 @@ namespace TCPclient
                         break;
                     }
                 case ActionStateEnum.RemoteEdit:
-                    {
-                        //editCodecForm.EditSaveFile(richTextBox1.Text, path);
+                    {                      
+                        editCodecForm.EditSaveFile(path,richTextBox1.Text);                        
                         break;
                     }
             }

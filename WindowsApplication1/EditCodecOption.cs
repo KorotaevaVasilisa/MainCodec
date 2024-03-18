@@ -3235,11 +3235,59 @@ namespace TCPclient
             this.pathToCopy = path;
         }
 
-        public void EditSaveFile(int size, string path, string text)
+        public void EditSaveFile(string path, string text)
         {
             SendMsg($"sfl openw {path}\r");
-            this.sizeReadFile = size;
             this.pathToCopy = path;
+            this.textFileEdit = text;
+        }
+
+        public void ReadBlockRemoteFile()
+        {
+            System.IO.File.WriteAllText(textLocalPath.Text+"/tmp.tmp", textFileEdit);
+            using (FileStream fstream = File.OpenRead(textLocalPath.Text + "/tmp.tmp"))
+            {
+                int count = 0;
+                int size = (int)fstream.Length;
+                int remainder = size;
+                do
+                {
+
+                    fstream.Seek(count * 600, SeekOrigin.Begin);
+                    byte[] buffer;
+                    if (remainder < 600)
+                    {
+                        buffer = new byte[remainder];
+                        fstream.Read(buffer, 0, remainder);
+                    }
+                    else
+                    {
+                        buffer = new byte[600];
+                        fstream.Read(buffer, 0, 600);
+                    }
+                    //TODO
+                    //string textFromFile = Encoding.UTF8.GetString(buffer);
+                    //byte[] text = System.Text.Encoding.Default.GetBytes(textFromFile);
+                    var data = System.Convert.ToBase64String(buffer);
+                    SendMsg($"sfl w {data}\r");
+                    count++;
+
+                    remainder = (int)fstream.Length - count * 600;
+                } while (remainder > 0);
+                SendMsg($"sfl end\r");
+                fstream.Close();
+                
+            }
+            DirectoryInfo directoryInfo = new DirectoryInfo(textLocalPath.Text + "/tmp.tmp");
+                if (directoryInfo.Exists)
+                {
+                    directoryInfo.Delete();
+                }
+            Invoke((MethodInvoker)(() => {
+                UpdateData();
+            }
+));
+            ActionState = ActionStateEnum.Inaction;
         }
 
         public void ReadBlockLocalFile()
@@ -3287,6 +3335,7 @@ namespace TCPclient
                 SendMsg($"sfl end\r");
                 fstream.Close();
             }
+            ActionState = ActionStateEnum.Inaction;
         }
 
         private void copyRemoteStripMenuItem_Click(object sender, EventArgs e)
@@ -3302,13 +3351,14 @@ namespace TCPclient
         public string rmsg_sfl = "";
         public string pathRemote, pathLocal, sFile;
         public ActionStateEnum ActionState;
-
+        public ListViewItem selectedItem;
         private void transferRemoteStripMenuItem_Click(object sender, EventArgs e)
         {
             ListView.SelectedListViewItemCollection items = listViewRemote.SelectedItems;
             if (items.Count == 0)
                 return;
 
+            selectedItem = items[0];
             ActionState = ActionStateEnum.RemoteTransfer;
             OpenRemoteFileInLoadingForm(ActionState, items[0]);
         }

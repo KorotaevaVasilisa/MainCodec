@@ -241,11 +241,13 @@ namespace TCPclient
                 {
                     if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit)
                     {
+                        /*
                         var plainTextBytes = Encoding.Default.GetBytes(MyParentForm.textFileEdit);
                         var text = System.Convert.ToBase64String(plainTextBytes);
                         int size = Encoding.Default.GetByteCount(text);
                         //MessageBox.Show(size.ToString());
-                        MyParentForm.SendMsg($"sfl w {text}\r");
+                        MyParentForm.SendMsg($"sfl w {text}\r");*/
+                        MyParentForm.ReadBlockRemoteFile();
                     }
 
                     if (MyParentForm.ActionState == ActionStateEnum.LocalTransfer || MyParentForm.ActionState == ActionStateEnum.LocalCopy)
@@ -327,6 +329,7 @@ namespace TCPclient
                     }
                     catch (Exception e)
                     {
+                        MessageBox.Show(e.Message);
                         logger.Error(String.Format("ERROR THREAD " + e.Message.ToString(), this, DateTime.Now));
                     }
                 }

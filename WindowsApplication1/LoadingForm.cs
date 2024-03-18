@@ -152,5 +152,5 @@ namespace TCPclient
                         Close();
                 }
             }
-        }
+    }
 }
