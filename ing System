@@ -1,0 +1,173 @@
+[33mcommit d92cc69b2cc950aff033c7f328384d28d33553f4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mbugs[m[33m, [m[1;31morigin/bugs[m[33m)[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Mon Mar 18 18:43:28 2024 +0600
+
+    Сохранение редактирования удаленного файла
+
+[33mcommit e633c409234809a6b83969dd10eef73a89b8eebd[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Mon Mar 11 17:41:03 2024 +0600
+
+    Запись файла на кодек пакетами (проблема с кодировками)
+
+[33mcommit 0a916e29fa8aa58daf2fa61ae3745e2ba7ac1cd9[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: 80126e6 f4f8882
+Author: KorotaevaVasilisa <35394626+KorotaevaVasilisa@users.noreply.github.com>
+Date:   Mon Feb 19 18:53:39 2024 +0600
+
+    Merge pull request #2 from KorotaevaVasilisa/listRemote-menu
+    
+    StripMenu
+
+[33mcommit f4f88822c16bd6090129eedbb1570526393a8422[m[33m ([m[1;31morigin/listRemote-menu[m[33m, [m[1;32mlistRemote-menu[m[33m)[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Mon Feb 19 18:47:57 2024 +0600
+
+    Поправка просмотрела папок на кодеке
+
+[33mcommit af88757d7c48b484d53ccdd0d03c01968c05218a[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Mon Feb 19 18:40:48 2024 +0600
+
+    Копирование и перенос файла с компьютера на кодек
+
+[33mcommit 1024e084338fa7a024c7c7d2aa93a0f59507c23a[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Mon Feb 19 17:25:17 2024 +0600
+
+    Небольшие поправки
+
+[33mcommit ef2e6823711fd5df515311c8cea7eb5029af10ad[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Thu Feb 15 17:51:32 2024 +0600
+
+    Обновление listRemote после редактирования файла
+
+[33mcommit 54b8e8de732cb75e0b85be0d1372da14d9aead21[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Thu Feb 15 15:51:03 2024 +0600
+
+    Конечная реализация редактирования файла с кодека
+
+[33mcommit 03ab836a0c5950200be279a78464fe16fbc5930d[m
+Author: vsls <vasilisa_001@mail.ru>
+Date:   Wed Feb 14 23:11:04 2024 +0600
+
+    listRemote изменение раположения колонки атрибут
+
+[33mcommit c33f163a778710f64c1e5d3e9fe483a86396cc3b[m
+Author: vsls <vasilisa_001@mail.ru>
+Date:   Wed Feb 14 22:55:22 2024 +0600
+
+    swl w исправление
+
+[33mcommit f3c272e63b3e3fd73c1f1dbc41e7e7e75cd6b545[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Tue Feb 13 17:08:39 2024 +0600
+
+    Изменение для предотвращения Invoke при прерывания чтения пакетов
+
+[33mcommit 22e966d07833d40044f08bf81ba0160f1f2afff6[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Wed Feb 7 17:36:38 2024 +0600
+
+    Добавление состояний просмотра и редактирование локальных файлов + sfl openw внедрение функции
+
+[33mcommit 1452cac759a122c95f2d76a0f08adce8b9aac703[m
+Author: vsls <vasilisa_001@mail.ru>
+Date:   Mon Feb 5 22:05:47 2024 +0600
+
+    Добавление состояний при нажатии на listBox + всплывание окна LoadingForm после выбора комирования или перемещения из local
+
+[33mcommit cae812222bb405080b8bb125deb10679e43f78ea[m
+Author: vsls <vasilisa_001@mail.ru>
+Date:   Thu Feb 1 21:15:20 2024 +0600
+
+    Редактирование кода и окна загрузки
+
+[33mcommit 7e646b1c0f84753216dad6740f8f44eb84724924[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Wed Jan 31 19:13:53 2024 +0600
+
+    Отображение содержания файла с кодека в форме+ чтение файла изменилось с имени на путь
+
+[33mcommit 6db69fc1d5c38770b5e66b9b04f982be9ba527f3[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Wed Jan 31 16:52:14 2024 +0600
+
+    Чтение файлов при открытии и редактировании(без вывода в форму)+ Изменение формы loadingForm для отображения загрузки.
+
+[33mcommit 155fada34f9f268477fae00c9705086cd8e66177[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Mon Jan 29 17:37:57 2024 +0600
+
+    Удаление файлов и папов на локальном и на удаленном устройстве
+
+[33mcommit 02c46f91e62f15d751ab7bf23c20e542ec38bbe4[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Thu Jan 25 20:02:55 2024 +0600
+
+    Реализация progressBar при осуществлении копирования или переноса файла + удаление файла с кодека при переносе.
+
+[33mcommit 71bcb4a5c9aa079deb30110aa7ac52350571b0f8[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Tue Jan 23 18:21:17 2024 +0600
+
+    Добавление флага, указывающий на то, был ли скопирован файл или же перенесен
+
+[33mcommit d6ffc1115ccae6d45a8a61acbe4ef3643558ab54[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Tue Jan 23 18:06:46 2024 +0600
+
+    Обработка события копирования/переноса файлов из удаленного устройства listViewRemote в локальный
+
+[33mcommit f43f5ef1b47617ac7f5f754787afb7f9fefed396[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Tue Jan 23 18:05:02 2024 +0600
+
+    Реализация окна копирования/переноса файлов
+
+[33mcommit f194e408931fcad5e0286631bfafc3839b487ac8[m
+Author: Vasilisa Korotaeva <korotaevaVG@outlook.com>
+Date:   Mon Jan 22 17:39:11 2024 +0600
+
+    Получение содержимого файлов через  команду sfl
+
+[33mcommit 80126e61328d279c3253d01e08bbd28e6fee4227[m
+Merge: 322d052 775953d
+Author: KorotaevaVasilisa <35394626+KorotaevaVasilisa@users.noreply.github.com>
+Date:   Mon Jan 22 14:06:39 2024 +0600
+
+    Merge pull request #1 from KorotaevaVasilisa/logger
+    
+    Logger+listViewRemote
+
+[33mcommit 775953d804267836267a84cd412b85823e85edf6[m[33m ([m[1;31morigin/logger[m[33m, [m[1;32mlogger[m[33m)[m
+Author: vsls <vasilisa_001@mail.ru>
+Date:   Sat Jan 20 16:47:32 2024 +0600
+
+    Удаление лишнего кода + фикс comboBox
+
+[33mcommit 6fde2469281129481ffde14a4f3f536141c5085d[m
+Author: vsls <vasilisa_001@mail.ru>
+Date:   Sat Jan 20 01:17:44 2024 +0600
+
+    Создание всплывающего меню при нажатии на listViewLocal + реализация просмотра и удааления
+
+[33mcommit 5ab74566c034844819ef8de3e6e2fe8c98048cf8[m
+Author: vsls <vasilisa_001@mail.ru>
+Date:   Fri Jan 19 17:15:06 2024 +0600
+
+    Устранена ошибка(рабочая версия)
+
+[33mcommit de65e408e9d46fc214778b71412bd2b47eda7d59[m
+Author: vsls <vasilisa_001@mail.ru>
+Date:   Thu Jan 18 16:07:57 2024 +0600
+
+    Рабочая версия консоли
+
+[33mcommit 322d052d67a1362f7f4f326b8747921d981c9dca[m
+Author: vsls <vasilisa_001@mail.ru>
+Date:   Wed Jan 17 18:17:24 2024 +0600
+
+    log4net + invoke

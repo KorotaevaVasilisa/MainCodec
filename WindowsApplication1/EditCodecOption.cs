@@ -1567,7 +1567,9 @@ namespace TCPclient
                     pathLocal = @"" + textLocalPath.Text + "\\" + file.Name;
                     try
                     {
-                        string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
+                        Encoding encoding = Encoding.GetEncoding("windows-1251");
+                        string fileText = System.IO.File.ReadAllText(pathLocal, encoding);
+                        //string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
                         ActionState = ActionStateEnum.LocalShow;
                         OpenFile_Dialog(ActionState, file.Name, fileText, pathLocal);
                     }
@@ -3078,7 +3080,9 @@ namespace TCPclient
                     */
                     try
                     {
-                        string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
+                        Encoding encoding = Encoding.GetEncoding("windows-1251");
+                        string fileText = System.IO.File.ReadAllText(pathLocal, encoding);
+                        //string fileText = System.IO.File.ReadAllText(pathLocal, Encoding.UTF8);
                         ActionState = ActionStateEnum.LocalEdit;
                         OpenFile_Dialog(ActionState, file.Name, fileText, pathLocal);
                     }
