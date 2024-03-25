@@ -239,6 +239,8 @@ namespace TCPclient
 
                 if (str.StartsWith("sfl openw") && str.Contains("Ok"))
                 {
+                    MyParentForm.ReadBlockLocalFile();
+                    /*
                     if (MyParentForm.ActionState == ActionStateEnum.RemoteEdit)
                     {
                         /*
@@ -246,19 +248,20 @@ namespace TCPclient
                         var text = System.Convert.ToBase64String(plainTextBytes);
                         int size = Encoding.Default.GetByteCount(text);
                         //MessageBox.Show(size.ToString());
-                        MyParentForm.SendMsg($"sfl w {text}\r");*/
+                        MyParentForm.SendMsg($"sfl w {text}\r");
                         MyParentForm.ReadBlockRemoteFile();
                     }
-
+                
                     if (MyParentForm.ActionState == ActionStateEnum.LocalTransfer || MyParentForm.ActionState == ActionStateEnum.LocalCopy)
                     {
                         /*
                             var plainTextBytes = System.Text.Encoding.Default.GetBytes(line);                          
                             var text = System.Convert.ToBase64String(plainTextBytes);
-                        MyParentForm.SendMsg($"sfl w {text}\r");*/
+                        MyParentForm.SendMsg($"sfl w {text}\r");
                         MyParentForm.ReadBlockLocalFile();
                         
                     }
+                */
                 }
 
                 if (MyParentForm.ActionState == ActionStateEnum.Stop)
@@ -329,8 +332,8 @@ namespace TCPclient
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show(e.Message);
-                        logger.Error(String.Format("ERROR THREAD " + e.Message.ToString(), this, DateTime.Now));
+                        MessageBox.Show("Controller Thread" +e.Message);
+                        logger.Error(String.Format("ERROR THREAD " + e.Message +  e.StackTrace, this, DateTime.Now));
                     }
                 }
             }

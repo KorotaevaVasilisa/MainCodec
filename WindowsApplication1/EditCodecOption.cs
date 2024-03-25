@@ -854,7 +854,7 @@ namespace TCPclient
             catch (Exception e)
             {
                 logger.Error($"SEND MSG {e.StackTrace} {e.Message}");
-                MessageBox.Show(e.Message);
+                MessageBox.Show("Send MSG"+e.Message);
             }
         }
 
@@ -1502,7 +1502,7 @@ namespace TCPclient
             }
             catch (Exception e) //Устройство (например CD-ROM) может быть не готов
             {
-                MessageBox.Show(e.Message);
+                MessageBox.Show("Local Refresh()"+e.Message);
             }
         }
 
@@ -1575,7 +1575,7 @@ namespace TCPclient
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        MessageBox.Show("Local Enter"+ex.Message);
                         logger.Error(String.Format($"{ex.Message} {ex.StackTrace}", DateTime.Now));
                     }
                 }
@@ -3088,7 +3088,7 @@ namespace TCPclient
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        MessageBox.Show("Click remote edit"+ex.Message);
                         logger.Error(String.Format($"{ex.Message} {ex.StackTrace}", DateTime.Now));
                     }
                 }
@@ -3248,8 +3248,9 @@ namespace TCPclient
 
         public void ReadBlockRemoteFile()
         {
-            System.IO.File.WriteAllText(textLocalPath.Text+"/tmp.tmp", textFileEdit);
-            using (FileStream fstream = File.OpenRead(textLocalPath.Text + "/tmp.tmp"))
+            string path = textLocalPath.Text + "\\tmp.tmp";
+            System.IO.File.WriteAllText(path, textFileEdit);
+            using (FileStream fstream = File.OpenRead(path))
             {
                 int count = 0;
                 int size = (int)fstream.Length;
@@ -3282,11 +3283,11 @@ namespace TCPclient
                 fstream.Close();
                 
             }
-            DirectoryInfo directoryInfo = new DirectoryInfo(textLocalPath.Text + "/tmp.tmp");
-                if (directoryInfo.Exists)
-                {
-                    directoryInfo.Delete();
-                }
+            System.IO.FileInfo file = new System.IO.FileInfo(path);
+            if (file.Exists)
+            {
+                file.Delete();
+            }
             Invoke((MethodInvoker)(() => {
                 UpdateData();
             }
@@ -3296,7 +3297,12 @@ namespace TCPclient
 
         public void ReadBlockLocalFile()
         {
-            using (FileStream fstream = File.OpenRead(pathLocal))
+
+            string pathFile;
+            if (ActionState == ActionStateEnum.RemoteEdit)
+                pathFile = textLocalPath.Text + "\\tmp.tmp";
+            else pathFile = pathLocal;
+            using (FileStream fstream = File.OpenRead(pathFile))
             {
                 int count = 0;
                 int size = (int)fstream.Length;
@@ -3322,14 +3328,15 @@ namespace TCPclient
                     var data = System.Convert.ToBase64String(buffer);
                     SendMsg($"sfl w {data}\r");
                     count++;
-                    onUpdateProgressBar(buffer.Length);
+                    if (ActionState != ActionStateEnum.RemoteEdit)
+                        onUpdateProgressBar(buffer.Length);
                     
                     remainder = (int)fstream.Length - count * 600;
                 } while (remainder > 0);
 
                     if (ActionState == ActionStateEnum.LocalTransfer)
                 {
-                    System.IO.FileInfo file = new System.IO.FileInfo(pathLocal);
+                    System.IO.FileInfo file = new System.IO.FileInfo(pathFile);
                     if (file.Exists)
                     {
                         file.Delete();
@@ -3430,13 +3437,28 @@ namespace TCPclient
             {
                 case ActionStateEnum.RemoteShow:
                 {
-                    OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
-                    break;
+                        string path = textLocalPath.Text + "\\tmp.tmp";
+                        Encoding encoding = Encoding.GetEncoding("windows-1251");
+                        System.IO.File.WriteAllText(textLocalPath.Text + "\\tmp.tmp", rmsg_sfl,encoding);
+                        OpenFile_Dialog(ActionState, sFile, rmsg_sfl, path);
+                        System.IO.FileInfo file = new System.IO.FileInfo(path);
+                        if (file.Exists)
+                        {
+                            file.Delete();
+                            LocalRefresh();
+                        }
+                        break;
                 }
                 case ActionStateEnum.RemoteEdit:
                 {
-                    OpenFile_Dialog(ActionState, sFile, rmsg_sfl, pathRemote);
-                    return;
+                        string path = textLocalPath.Text + "\\tmp.tmp";
+                        Encoding encoding = Encoding.GetEncoding("windows-1251");
+                        System.IO.File.WriteAllText(path, rmsg_sfl,encoding);
+                        OpenFile_Dialog(ActionState, sFile, rmsg_sfl, path);
+
+                        SendMsg($"sfl openw {pathRemote}\r");
+
+                        return;
                 }
                 case ActionStateEnum.RemoteCopy:
                 {
@@ -3476,7 +3498,7 @@ namespace TCPclient
             catch (Exception ex)
             {
                 logger.Error(String.Format($"PROGRESS BAR {ex.Message} {ex.StackTrace} {ex.Source}", DateTime.Now));
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Progress bar"+ex.Message);
             }
         }
     }

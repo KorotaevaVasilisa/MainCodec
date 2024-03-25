@@ -47,11 +47,7 @@ namespace TCPclient
 
         private void saveButton_Click(object sender, EventArgs e)
         {
-               
-            switch (state)
-            {
-                case ActionStateEnum.LocalEdit:
-                    {
+
                         try
                         {
                             /*
@@ -78,16 +74,8 @@ namespace TCPclient
                         catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message);
-                        }
-                        break;
-                    }
-                case ActionStateEnum.RemoteEdit:
-                    {                      
-                        editCodecForm.EditSaveFile(path,richTextBox1.Text);                        
-                        break;
-                    }
-            }
-            Close();
+                        }                                     
+        Close();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
